@@ -1,0 +1,11 @@
+version: "3.9"
+services:
+  app:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    environment:
+      PORT: 8000
+    ports:
+      - "8000:8000"
+#    entrypoint: sleep infinity
