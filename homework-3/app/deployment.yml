@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: arch-homework
+  labels:
+    app: arch-homework
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: arch-homework
+  template:
+    metadata:
+      labels:
+        app: arch-homework
+    spec:
+      containers:
+        - name: arch-homework
+          image: maks113/microservice-architecture-homework-2:1.0.1
+          env:
+            - name: PORT
+              value: "8000"
+          ports:
+            - containerPort: 8000
+          livenessProbe:
+            httpGet:
+              path: /health/
+              port: 8000
+          readinessProbe:
+            httpGet:
+              path: /health/
+              port: 8000
