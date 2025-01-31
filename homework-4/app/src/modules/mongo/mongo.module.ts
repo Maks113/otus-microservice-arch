@@ -21,11 +21,6 @@ import { PinoLogger } from 'nestjs-pino';
         };
       },
     }),
-    // MongooseModule.forRoot('mongodb://root:example@mongo:27017'),
-    // MongooseModule.forRootAsync({
-    //   connectionName: 'main',
-    //   useFactory: async () => ({ uri: 'mongodb://root:example@mongo:27017' }),
-    // }),
   ],
   exports: [],
 })
