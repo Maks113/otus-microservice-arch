@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "fullname" . }}-mongo
+  labels:
+    app: mongo
+spec:
+  serviceName: "{{ include "fullname" . }}"-mongo
+  replicas: {{ .Values.mongo.replicas }}
+  selector:
+    matchLabels:
+      app: mongo
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+      containers:
+        - name: mongo
+          image: "{{ .Values.mongo.image }}"
+          ports:
+            - containerPort: 27017
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              value: "{{ .Values.mongo.username }}"
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              value: "{{ .Values.mongo.password }}"
+          volumeMounts:
+            - name: mongo-data
+              mountPath: /data/db
+            - name: mongo-config
+              mountPath: /data/configdb
+            - name: mongo-key
+              mountPath: /data/keys/mongo.key
+              subPath: mongo.key
+          command:
+            - mongod
+            - "--replSet"
+            - "rs0"
+            - "--bind_ip_all"
+            - "--port"
+            - "27017"
+            - "--keyFile"
+            - "/data/keys/mongo.key"
+      volumes:
+        - name: mongo-key
+          secret:
+            secretName: {{ include "fullname" . }}-mongo-key
+  volumeClaimTemplates:
+    - metadata:
+        name: mongo-data
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: {{ .Values.mongo.volumeSize }}
+    - metadata:
+        name: mongo-config
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 200Mb

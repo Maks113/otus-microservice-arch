@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-consumer-service
+spec:
+  selector:
+    matchLabels:
+      app: consumer-service
+  template:
+    metadata:
+      labels:
+        app: consumer-service
+    spec:
+      containers:
+        - name: consumer-service
+          image: "maks113/valid-page-consumer-service"
+          ports:
+            - containerPort: 8002
+          env:
+            - name: PORT
+              value: "8002"
+
+              # Mongo
+            - name: MONGO_HOST
+              value: {{ include "fullname" . }}-mongo-service
+            - name: MONGO_PORT
+              value: "27017"
+            - name: MONGO_USER
+              value: {{ .Values.mongo.username }}
+            - name: MONGO_PASSWORD
+              value: {{ .Values.mongo.password }}
+            - name: MONGO_DB_NAME
+              value: "notifications"
+
+            # Kafka configuration
+            - name: KAFKA_BROKERS_CSV
+              value: "{{ include "fullname" . }}-kafka-service:9092"
+            - name: KAFKA_GROUP_ID
+              value: {{ .Values.notificationService.serviceId }}
+
+            # Other group IDs
+            - name: CONSUMER_SERVICE_GROUP_ID
+              value: {{ .Values.consumerService.serviceId }}
+            - name: PAGE_CAPTURE_SERVICE_GROUP_ID
+              value: {{ .Values.pageCaptureService.serviceId }}
+            - name: SCREENSHOT_META_SERVICE_GROUP_ID
+              value: {{ .Values.screenshotMetaService.serviceId }}
+            - name: NOTIFICATION_SERVICE_GROUP_ID
+              value: {{ .Values.notificationService.serviceId }}
+            - name: SCREENSHOT_REQUEST_SERVICE_GROUP_ID
+              value: {{ .Values.screenshotRequestsService.serviceId }}
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "500m"
+            limits:
+              memory: "1024Mi"
+              cpu: "1000m"

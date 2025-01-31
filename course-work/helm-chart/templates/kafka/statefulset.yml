@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "fullname" . }}-kafka
+  labels:
+    app: kafka
+spec:
+  serviceName: "{{ include "fullname" . }}"-kafka
+  replicas: {{ .Values.kafka.replicas }}
+  selector:
+    matchLabels:
+      app: kafka
+  template:
+    metadata:
+      labels:
+        app: kafka
+    spec:
+      containers:
+        - name: kafka
+          image: "{{ .Values.kafka.image }}"
+          ports:
+            - containerPort: 27017
+          env:
+            - name: KAFKA_CFG_PROCESS_ROLES
+              value: "controller,broker"
+            - name: KAFKA_CFG_NODE_ID
+              value: "1"
+            - name: KAFKA_CFG_CONTROLLER_QUORUM_VOTERS
+              value: "1@{{ include "fullname" . }}-kafka-service:9093"
+            - name: KAFKA_KRAFT_CLUSTER_ID
+              value: "ZgYhN123S8q9r7QwRDqriA"
+            - name: KAFKA_CFG_LISTENERS
+              value: "CONTROLLER://:9093,PLAINTEXT://:9092"
+            - name: KAFKA_CFG_ADVERTISED_LISTENERS
+              value: "PLAINTEXT://:9092"
+            - name: KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP
+              value: "CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT"
+            - name: KAFKA_CFG_CONTROLLER_LISTENER_NAMES
+              value: "CONTROLLER"
+            - name: KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE
+              value: "true"
+            - name: KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR
+              value: "1"
+            - name: ALLOW_PLAINTEXT_LISTENER
+              value: "yes"
+          volumeMounts:
+            - name: kafka-data
+              mountPath: /data/db
+  volumeClaimTemplates:
+    - metadata:
+        name: kafka-data
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: {{ .Values.kafka.volumeSize }}

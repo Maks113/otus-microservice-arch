@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "fullname" . }}-postgres
+  labels:
+    app: postgres
+spec:
+  serviceName: "{{ include "fullname" . }}"-postgres
+  replicas: {{ .Values.postgres.replicas }}
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: "{{ .Values.postgres.image }}"
+          ports:
+            - containerPort: 27017
+          env:
+            - name: POSTGRES_DB
+              value: "{{ .Values.postgres.bdName }}"
+            - name: MONGO_INITDB_ROOT_USERNAME
+              value: "{{ .Values.postgres.username }}"
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              value: "{{ .Values.postgres.password }}"
+          volumeMounts:
+            - name: postgres-data
+              mountPath: /data/db
+  volumeClaimTemplates:
+    - metadata:
+        name: postgres-data
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: {{ .Values.postgres.volumeSize }}

@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "fullname" . }}-page-capture
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8003
+      targetPort: 8003
+  selector:
+    app: page-capture
