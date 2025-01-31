@@ -5,7 +5,7 @@ metadata:
   labels:
     app: kafka
 spec:
-  serviceName: "{{ include "fullname" . }}"-kafka
+  serviceName: {{ include "fullname" . }}-kafka
   replicas: {{ .Values.kafka.replicas }}
   selector:
     matchLabels:
@@ -19,7 +19,8 @@ spec:
         - name: kafka
           image: "{{ .Values.kafka.image }}"
           ports:
-            - containerPort: 27017
+            - containerPort: 9093
+            - containerPort: 9092
           env:
             - name: KAFKA_CFG_PROCESS_ROLES
               value: "controller,broker"

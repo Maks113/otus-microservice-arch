@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Release.Name }}-page-capture
+  name: {{ include "fullname" . }}-page-capture
 spec:
   selector:
     matchLabels:
@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
         - name: page-capture
-          image: "maks113/valid-page-page-capture-service"
+          image: "maks113/valid-page-page-capture-service:1.0.0"
           ports:
             - containerPort: 8003
           env:
@@ -68,7 +68,7 @@ spec:
           resources:
             requests:
               memory: "512Mi"
-              cpu: "500m"
+              cpu: "200m"
             limits:
               memory: "1024Mi"
               cpu: "1000m"

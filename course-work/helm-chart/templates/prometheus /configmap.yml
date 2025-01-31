@@ -9,7 +9,6 @@ data:
     global:
       scrape_interval: 15s
     scrape_configs:
-      scrapeConfigs:
       - job_name: 'kafka'
         static_configs:
           - targets: [ '{{ include "fullname" . }}-kafka-service:9092' ]

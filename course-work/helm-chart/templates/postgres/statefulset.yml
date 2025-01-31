@@ -5,7 +5,7 @@ metadata:
   labels:
     app: postgres
 spec:
-  serviceName: "{{ include "fullname" . }}"-postgres
+  serviceName: {{ include "fullname" . }}-postgres
   replicas: {{ .Values.postgres.replicas }}
   selector:
     matchLabels:

@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Release.Name }}-screenshot-requests
+  name: {{ include "fullname" . }}-screenshot-requests
 spec:
   selector:
     matchLabels:
@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
         - name: screenshot-requests
-          image: "maks113/valid-page-screenshot-requests-service"
+          image: "maks113/valid-page-screenshot-requests-service:1.0.0"
           ports:
             - containerPort: 8000
           env:
@@ -64,7 +64,7 @@ spec:
           resources:
             requests:
               memory: "512Mi"
-              cpu: "500m"
+              cpu: "200m"
             limits:
               memory: "1024Mi"
               cpu: "1000m"

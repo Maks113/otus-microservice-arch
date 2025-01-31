@@ -30,9 +30,9 @@ spec:
               name: console
           env:
             - name: MINIO_ROOT_USER
-              value: {{ .Values.minio.rootUser | quote }}
+              value: "{{ .Values.minio.rootUser  }}"
             - name: MINIO_ROOT_PASSWORD
-              value: {{ .Values.minio.rootPassword | quote }}
+              value: "{{ .Values.minio.rootPassword }}"
           volumeMounts:
             - name: data
               mountPath: /data
@@ -44,4 +44,3 @@ spec:
         resources:
           requests:
             storage: {{ .Values.minio.volumeSize }}
-        storageClassName: "linode-block-storage-retain"

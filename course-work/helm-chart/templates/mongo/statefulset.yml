@@ -5,7 +5,7 @@ metadata:
   labels:
     app: mongo
 spec:
-  serviceName: "{{ include "fullname" . }}"-mongo
+  serviceName: {{ include "fullname" . }}-mongo
   replicas: {{ .Values.mongo.replicas }}
   selector:
     matchLabels:
@@ -60,4 +60,4 @@ spec:
         accessModes: [ "ReadWriteOnce" ]
         resources:
           requests:
-            storage: 200Mb
+            storage: 200Mi
