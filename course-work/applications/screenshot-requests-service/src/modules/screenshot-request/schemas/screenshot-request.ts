@@ -17,9 +17,12 @@ export class ScreenshotRequest {
   @Prop({ type: [String], default: [] })
   errors: string[];
 
-  // @Prop({ required: true })
-  // userEmail: string;
-  //
+  @Prop({ required: false })
+  traceId: string;
+
+  @Prop({ required: false })
+  spanId: string;
+
   // @Prop({ required: true })
   // link: string;
   //

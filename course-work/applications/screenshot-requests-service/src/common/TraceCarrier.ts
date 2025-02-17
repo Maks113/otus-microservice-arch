@@ -1,0 +1,1 @@
+export type TraceCarrier = Record<string, string | number | undefined | null>;

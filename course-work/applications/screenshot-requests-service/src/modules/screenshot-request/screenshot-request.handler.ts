@@ -1,6 +1,8 @@
 import { Controller, Inject, OnModuleInit } from '@nestjs/common';
 import { ClientKafka, EventPattern, Payload } from '@nestjs/microservices';
+import { api } from '@opentelemetry/sdk-node';
 import { PinoLogger } from 'nestjs-pino';
+import { TraceEvent } from '../../common/TraceEvent';
 import { ConsumerKeepResultEvent } from '../../domains/consumer/events/ConsumerKeepResultEvent';
 import { ConsumerReleaseResultEvent } from '../../domains/consumer/events/ConsumerReleaseResultEvent';
 import { PageCaptureCreateResultEvent } from '../../domains/page-capture/events/PageCaptureCreateResultEvent';
@@ -31,48 +33,60 @@ export class ScreenshotRequestHandler implements OnModuleInit {
   @EventPattern('consumer.keep.result')
   async consumerKeepResult(@Payload() payload: ConsumerKeepResultEvent): Promise<void> {
     this.logger.info({ event: 'consumer.keep.result', payload });
-    if (payload.error) {
-      await this.screenshotRequestSagaService.compensate(payload.requestId, payload.error);
-    } else {
-      await this.screenshotRequestSagaService.nextStep(payload.requestId, payload);
-    }
+    await api.context.with(TraceEvent.getEventContext(payload.traceCarrier), async () => {
+      if (payload.error) {
+        await this.screenshotRequestSagaService.compensate(payload.requestId, payload.error);
+      } else {
+        await this.screenshotRequestSagaService.nextStep(payload.requestId, payload);
+      }
+    });
   }
 
   @EventPattern('consumer.release.result')
   async consumerReleaseResult(@Payload() payload: ConsumerReleaseResultEvent): Promise<void> {
     this.logger.info({ event: 'consumer.release.result', payload });
-    await this.screenshotRequestSagaService.nextStep(payload.requestId, payload);
+    await api.context.with(TraceEvent.getEventContext(payload.traceCarrier), async () => {
+      await this.screenshotRequestSagaService.nextStep(payload.requestId, payload);
+    });
   }
 
   @EventPattern('page-capture.create.result')
   async pageCaptureCreateResult(@Payload() payload: PageCaptureCreateResultEvent): Promise<void> {
     this.logger.info({ event: 'consumer.keep.result', payload });
-    if (payload.error) {
-      await this.screenshotRequestSagaService.compensate(payload.requestId, payload.error);
-    } else {
-      await this.screenshotRequestSagaService.nextStep(payload.requestId, payload);
-    }
+    await api.context.with(TraceEvent.getEventContext(payload.traceCarrier), async () => {
+      if (payload.error) {
+        await this.screenshotRequestSagaService.compensate(payload.requestId, payload.error);
+      } else {
+        await this.screenshotRequestSagaService.nextStep(payload.requestId, payload);
+      }
+    });
   }
 
   @EventPattern('page-capture.delete.result')
   async pageCaptureDeleteResult(@Payload() payload: PageCaptureDeleteResultEvent): Promise<void> {
     this.logger.info({ event: 'page-capture.delete.result', payload });
-    await this.screenshotRequestSagaService.nextStep(payload.requestId, payload);
+    await api.context.with(TraceEvent.getEventContext(payload.traceCarrier), async () => {
+      await this.screenshotRequestSagaService.nextStep(payload.requestId, payload);
+    });
   }
 
   @EventPattern('screenshot-meta.create.result')
   async screenshotMetaCreateResult(@Payload() payload: ScreenshotMetaCreateResultEvent): Promise<void> {
     this.logger.info({ event: 'screenshot-meta.create.result', payload });
-    if (payload.error) {
-      await this.screenshotRequestSagaService.compensate(payload.requestId, payload.error);
-    } else {
-      await this.screenshotRequestSagaService.nextStep(payload.requestId, payload);
-    }
+    await api.context.with(TraceEvent.getEventContext(payload.traceCarrier), async () => {
+      if (payload.error) {
+        await this.screenshotRequestSagaService.compensate(payload.requestId, payload.error);
+      } else {
+        await this.screenshotRequestSagaService.nextStep(payload.requestId, payload);
+      }
+    });
   }
 
   @EventPattern('screenshot-meta.delete.result')
   async screenshotMetaDeleteResult(@Payload() payload: ScreenshotMetaDeleteResultEvent): Promise<void> {
     this.logger.info({ event: 'screenshot-meta.delete.result', payload });
-    await this.screenshotRequestSagaService.nextStep(payload.requestId, payload);
+    await api.context.with(TraceEvent.getEventContext(payload.traceCarrier), async () => {
+      await this.screenshotRequestSagaService.nextStep(payload.requestId, payload);
+    });
   }
 }

@@ -26,6 +26,8 @@ services:
       SCREENSHOT_REQUEST_SERVICE_GROUP_ID: 'screenshot-requests'
     ports:
       - "8000:8000"
+      - "9339:9229"
+    entrypoint: ["npm", "run", "start:debug"]
 
   notifications-service:
     platform: 'linux/amd64'
@@ -200,7 +202,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: example
       # mongo "mongodb://root:example@localhost:27017/?replicaSet=rs0"
       # openssl rand -base64 756 > mongo.key
-      # rs.initiate({_id:'rs0',members:[{_id:0,host:'mongo:27017',priority:1}]}):
+      # rs.initiate({_id:'rs0',members:[{_id:0,host:'mongo:27017',priority:1}]});
     command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27017", "--keyFile", "/data/keys/mongo.key"]
 
   kafka:
@@ -241,6 +243,15 @@ services:
     environment:
       KAFKA_CLUSTERS_0_NAME: kafka
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+
+  jaeger:
+    image: jaegertracing/jaeger:2.3.0
+    ports:
+      - "16686:16686"
+      - "4317:4317"
+      - "4318:4318"
+      - "5778:5778"
+      - "9411:9411"
 
 volumes:
   mongo-volume:

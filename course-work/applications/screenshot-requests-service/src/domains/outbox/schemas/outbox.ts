@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
+import { TraceCarrier } from '../../../common/TraceCarrier';
 
 export type OutboxDocument = HydratedDocument<Outbox>;
 
@@ -20,6 +21,12 @@ export class Outbox {
 
   @Prop({ required: true })
   topic: string;
+
+  @Prop({
+    required: false,
+    type: Object,
+  })
+  traceCarrier: TraceCarrier;
 
   @Prop({ required: true })
   payload: string;

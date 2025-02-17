@@ -1,6 +1,8 @@
+import otelSDK from './tracing';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import { Partitioners } from 'kafkajs';
 import { Logger } from 'nestjs-pino';
 import { AppModule } from './app/app.module';
 import { ConfigurationModule } from './domains/configuration/configuration.module';
@@ -10,6 +12,8 @@ import { LoggerPlugin } from './plugins/logger.plugin';
 import { SwaggerPlugin } from './plugins/swagger.plugin';
 
 async function bootstrap() {
+  otelSDK.start();
+
   const configContext = await NestFactory.createApplicationContext(
     ConfigurationModule,
   );
@@ -35,6 +39,7 @@ async function bootstrap() {
         groupId: configService.get<string>('kafka.groupId')!,
       },
       producer: {
+        createPartitioner: Partitioners.DefaultPartitioner,
         allowAutoTopicCreation: true,
       },
     }

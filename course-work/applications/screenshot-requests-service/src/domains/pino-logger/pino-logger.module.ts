@@ -8,14 +8,14 @@ const config: PinoParams = {
       req: (req) => ({
         id: req.id,
         method: req.method,
-        url: req.url
+        url: req.url,
       }),
       res: (res) => ({
         statusCode: res.statusCode,
-      })
-    }
-  }
-}
+      }),
+    },
+  },
+};
 
 @Module({
   imports: [

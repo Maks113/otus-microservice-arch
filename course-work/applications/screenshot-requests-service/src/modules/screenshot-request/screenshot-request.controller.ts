@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Headers, HttpStatus, Inject, OnModuleInit, Post, Res } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
+import { api } from '@opentelemetry/sdk-node';
 import { Response } from 'express';
 import { PinoLogger } from 'nestjs-pino';
 import { CONSUMER_SERVICE, NOTIFICATION_SERVICE, PAGE_CAPTURE_SERVICE } from '../../domains/services/constants';
@@ -10,6 +11,7 @@ import { ScreenshotRequestService } from './screenshot-request.service';
 
 @Controller('screenshot-request')
 export class ScreenshotRequestController implements OnModuleInit {
+
   constructor(
     private readonly screenshotRequestService: ScreenshotRequestService,
     private readonly screenshotRequestSagaService: ScreenshotRequestSagaService,
@@ -32,6 +34,9 @@ export class ScreenshotRequestController implements OnModuleInit {
     @Res() res: Response,
     @Body() body: RequestCreateDto,
   ): Promise<void> {
+    const span = api.trace.getActiveSpan();
+    span?.updateName(`POST /screenshot-request`);
+
     const created = await this.screenshotRequestSagaService.startSaga(body);
     res.status(HttpStatus.CREATED).send(created);
   }

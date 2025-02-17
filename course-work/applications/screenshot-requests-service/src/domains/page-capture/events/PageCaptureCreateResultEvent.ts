@@ -1,6 +1,8 @@
 import { IsNotEmpty, IsString } from 'class-validator';
+import { TraceEvent } from '../../../common/TraceEvent';
+import { TraceCarrier } from '../../../common/TraceCarrier';
 
-export class PageCaptureCreateResultEvent {
+export class PageCaptureCreateResultEvent extends TraceEvent {
   @IsNotEmpty()
   @IsString()
   requestId: string;
@@ -22,7 +24,16 @@ export class PageCaptureCreateResultEvent {
   @IsString()
   error: string | null;
 
-  constructor(requestId: string, link: string, hash: string | null, imageName: string | null, status: 'created' | 'failed', error = null) {
+  constructor(
+    requestId: string,
+    link: string,
+    hash: string | null,
+    imageName: string | null,
+    status: 'created' | 'failed',
+    error = null,
+    traceCarrier?: TraceCarrier,
+  ) {
+    super(traceCarrier)
     this.requestId = requestId;
     this.link = link;
     this.hash = hash;

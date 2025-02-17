@@ -1,24 +1,31 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import opentelemetry, { Tracer } from '@opentelemetry/api';
+import { api } from '@opentelemetry/sdk-node';
 import { Model, Types } from 'mongoose';
+import { Span } from 'nestjs-otel';
 import { PinoLogger } from 'nestjs-pino';
+import { TraceCarrier } from '../../common/TraceCarrier';
 import { RequestCreateDto } from './dto/requestCreateDto';
 import { ScreenshotRequest } from './schemas/screenshot-request';
 import { ScreenshotRequestService } from './screenshot-request.service';
 
 @Injectable()
 export class ScreenshotRequestSagaService {
+  tracer: Tracer;
+
   constructor(
     @InjectModel(ScreenshotRequest.name) private screenshotRequestModel: Model<ScreenshotRequest>,
     private readonly screenshotRequestService: ScreenshotRequestService,
     private readonly logger: PinoLogger,
   ) {
+    this.tracer = opentelemetry.trace.getTracer(ScreenshotRequestSagaService.name);
     this.logger.setContext(ScreenshotRequestSagaService.name);
   }
 
   private steps: {
-    action: (requestId: string | Types.ObjectId, payload: any) => Promise<void>,
-    compensation: ((requestId: string, payload: any) => Promise<void>) | null
+    action: (requestId: string | Types.ObjectId, payload: any, traceCarrier?: TraceCarrier) => Promise<void>,
+    compensation: ((requestId: string, payload: any, traceCarrier?: TraceCarrier) => Promise<void>) | null
   }[] = [
     { action: this.createRequest.bind(this), compensation: this.failRequest.bind(this) },
     { action: this.keepUserRequest.bind(this), compensation: this.releaseUserRequestCompensation.bind(this) },
@@ -28,11 +35,13 @@ export class ScreenshotRequestSagaService {
     { action: this.sendNotification.bind(this), compensation: null },
   ];
 
+  @Span()
   async startSaga(data: RequestCreateDto): Promise<void> {
     await this.steps[0].action('', data);
   }
 
   // Переход к следующему шагу
+  @Span()
   async nextStep(requestId: Types.ObjectId | string, payload: any): Promise<void> {
     const request = await this.screenshotRequestModel.findById(requestId).exec();
     if (!request) {
@@ -52,10 +61,13 @@ export class ScreenshotRequestSagaService {
       request,
     });
     await request.save();
-    await this.steps[request.currentStep].action(requestId, request.payload);
+    const traceCarrier = {};
+    api.propagation.inject(api.context.active(), traceCarrier);
+    await this.steps[request.currentStep].action(requestId, request.payload, traceCarrier);
   }
 
   // Запуск компенсации
+  @Span()
   async compensate(requestId: string, error: string): Promise<void> {
     const request = await this.screenshotRequestModel.findById(requestId).exec();
     if (!request) {
@@ -65,8 +77,10 @@ export class ScreenshotRequestSagaService {
     request.status = 'compensating';
     request.errors.push(error);
     await request.save();
+    const traceCarrier = {};
+    api.propagation.inject(api.context.active(), traceCarrier);
     for (let i = request.currentStep; i >= 0; i--) {
-      await this.steps[i].compensation?.(requestId, request.payload);
+      await this.steps[i].compensation?.(requestId, request.payload, traceCarrier);
     }
   }
 
@@ -84,6 +98,7 @@ export class ScreenshotRequestSagaService {
   //   await request.save();
   // }
 
+  @Span()
   async createRequest(requestId, payload) {
     this.logger.info({
       saga: requestId,
@@ -96,7 +111,8 @@ export class ScreenshotRequestSagaService {
     await this.nextStep(request._id, {});
   }
 
-  async failRequest(requestId, payload) {
+  @Span()
+  async failRequest(requestId, payload, traceCarrier) {
     this.logger.info({
       saga: requestId,
       msg: 'failRequest',
@@ -105,61 +121,68 @@ export class ScreenshotRequestSagaService {
     // await this.markCompensated(requestId);
   }
 
-  async keepUserRequest(requestId, payload) {
+  @Span()
+  async keepUserRequest(requestId, payload, traceCarrier) {
     this.logger.info({
       saga: requestId,
       msg: 'keepUserRequest',
     });
-    await this.screenshotRequestService.keepUserRequest(requestId, payload);
+    await this.screenshotRequestService.keepUserRequest(requestId, payload, traceCarrier);
   }
 
-  async releaseUserRequest(requestId, payload) {
+  @Span()
+  async releaseUserRequest(requestId, payload, traceCarrier) {
     this.logger.info({
       saga: requestId,
       msg: 'releaseUserRequest',
     });
-    await this.screenshotRequestService.releaseUserRequest(requestId, payload);
+    await this.screenshotRequestService.releaseUserRequest(requestId, payload, traceCarrier);
   }
 
-  async releaseUserRequestCompensation(requestId, payload) {
+  @Span()
+  async releaseUserRequestCompensation(requestId, payload, traceCarrier) {
     this.logger.info({
       saga: requestId,
       msg: 'releaseUserRequestCompensation',
     });
-    await this.screenshotRequestService.releaseUserRequest(requestId, payload);
+    await this.screenshotRequestService.releaseUserRequest(requestId, payload, traceCarrier);
     // await this.markCompensated(requestId);
   }
 
-  async takePageCapture(requestId, payload) {
+  @Span()
+  async takePageCapture(requestId, payload, traceCarrier) {
     this.logger.info({
       saga: requestId,
       msg: 'takePageCapture',
     });
-    await this.screenshotRequestService.takePageCapture(requestId, payload);
+    await this.screenshotRequestService.takePageCapture(requestId, payload, traceCarrier);
   }
 
-  async deletePageCapture(requestId, payload) {
+  @Span()
+  async deletePageCapture(requestId, payload, traceCarrier) {
     this.logger.info({
       saga: requestId,
       msg: 'deletePageCapture',
     });
-    await this.screenshotRequestService.deletePageCapture(requestId, payload);
+    await this.screenshotRequestService.deletePageCapture(requestId, payload, traceCarrier);
     // await this.markCompensated(requestId);
   }
 
-  async saveMeta(requestId, payload) {
+  @Span()
+  async saveMeta(requestId, payload, traceCarrier) {
     this.logger.info({
       saga: requestId,
       msg: 'saveMeta',
     });
-    await this.screenshotRequestService.addScreenshotMeta(requestId, payload);
+    await this.screenshotRequestService.addScreenshotMeta(requestId, payload, traceCarrier);
   }
 
-  async sendNotification(requestId, payload) {
+  @Span()
+  async sendNotification(requestId, payload, traceCarrier) {
     this.logger.info({
       saga: requestId,
       msg: 'sendNotification',
     });
-    await this.screenshotRequestService.sendNotification(requestId, payload);
+    await this.screenshotRequestService.sendNotification(requestId, payload, traceCarrier);
   }
 }
