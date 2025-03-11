@@ -1,7 +1,9 @@
 import { Controller, Get, Inject, OnModuleInit, Param, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { ClientKafka, EventPattern, Payload } from '@nestjs/microservices';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { SpanStatusCode, trace } from '@opentelemetry/api';
 import { Express } from 'express';
+import { Span } from 'nestjs-otel';
 import { PinoLogger } from 'nestjs-pino';
 import { SCREENSHOT_REQUEST_SERVICE } from '../../domains/services/constants';
 import { ScreenshotMetaCreateEvent } from './dto/ScreenshotMetaCreateEvent';
@@ -26,12 +28,14 @@ export class ScreenshotMetaController implements OnModuleInit {
   }
 
   @Get(':id')
+  @Span('Get screenshot request by id', {})
   async getById(@Param('id') id: string): Promise<ScreenshotMetaDocument | null> {
     return await this.screenshotMetaService.getById(id);
   }
 
   @Post('')
   @UseInterceptors(FileInterceptor('file'))
+  @Span('Validate screenshot', {})
   async validate(
     @UploadedFile() file: Express.Multer.File,
   ): Promise<ScreenshotMetaDocument | null> {
@@ -40,13 +44,22 @@ export class ScreenshotMetaController implements OnModuleInit {
   }
 
   @EventPattern('screenshot-meta.create')
-  async consumerKeep(@Payload() payload: ScreenshotMetaCreateEvent): Promise<void> {
+  async screenshotMetaCreate(@Payload() payload: ScreenshotMetaCreateEvent): Promise<void> {
     this.logger.info({ event: 'page-capture.create', payload });
+    const span = trace.getActiveSpan();
+    span?.setAttributes({ ...payload });
+
     let error: string | null = null;
     try {
       await this.screenshotMetaService.create(payload);
     } catch (e) {
-      error = e?.message ?? 'unknown error';
+      if (e instanceof Error) {
+        error = e?.message ?? 'unknown error';
+        span?.setStatus({
+          code: SpanStatusCode.ERROR,
+          message: e.message,
+        })
+      }
     } finally {
       this.screenshotRequestClient.emit(
         'screenshot-meta.create.result',
@@ -58,8 +71,10 @@ export class ScreenshotMetaController implements OnModuleInit {
   }
 
   @EventPattern('screenshot-meta.delete')
-  async consumer(@Payload() payload: ScreenshotMetaDeleteEvent): Promise<void> {
+  async screenshotMetaDelete(@Payload() payload: ScreenshotMetaDeleteEvent): Promise<void> {
     this.logger.info({ event: 'page-capture.delete', payload });
+    const span = trace.getActiveSpan();
+    span?.setAttributes({ ...payload })
 
     await this.screenshotMetaService.delete(payload);
 

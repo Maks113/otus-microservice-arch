@@ -1,5 +1,4 @@
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
-import { v4 } from 'uuid';
 
 export class NotificationEvent {
   @IsNotEmpty()

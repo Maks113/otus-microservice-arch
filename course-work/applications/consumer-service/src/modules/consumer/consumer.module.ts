@@ -3,7 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { MongoModule } from '../../domains/mongo/mongo.module';
 import { ServiceLocatorModule } from '../../domains/services/services.module';
 import { ConsumerRequests, ConsumerSchema } from './schemas/consumerRequests';
-import { ConsumerController } from './consumer.controller';
+import { ConsumerHandler } from './consumer.handler';
 import { ConsumerService } from './consumer.service';
 
 @Module({
@@ -12,7 +12,7 @@ import { ConsumerService } from './consumer.service';
     ServiceLocatorModule,
     MongooseModule.forFeature([{ name: ConsumerRequests.name, schema: ConsumerSchema }])
   ],
-  controllers: [ConsumerController],
+  controllers: [ConsumerHandler],
   providers: [ConsumerService],
 })
 export class ConsumerModule {}

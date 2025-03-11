@@ -24,6 +24,7 @@ services:
       SCREENSHOT_META_SERVICE_GROUP_ID: 'screenshot-meta'
       NOTIFICATION_SERVICE_GROUP_ID: 'notifications'
       SCREENSHOT_REQUEST_SERVICE_GROUP_ID: 'screenshot-requests'
+      OTEL_TRACE_COLLECTOR_URL: 'http://jaeger:4317'
     ports:
       - "8000:8000"
       - "9339:9229"
@@ -53,6 +54,7 @@ services:
       SCREENSHOT_META_SERVICE_GROUP_ID: 'screenshot-meta'
       NOTIFICATION_SERVICE_GROUP_ID: 'notifications'
       SCREENSHOT_REQUEST_SERVICE_GROUP_ID: 'screenshot-requests'
+      OTEL_TRACE_COLLECTOR_URL: 'http://jaeger:4317'
     ports:
       - "8001:8001"
 
@@ -80,6 +82,7 @@ services:
       SCREENSHOT_META_SERVICE_GROUP_ID: 'screenshot-meta'
       NOTIFICATION_SERVICE_GROUP_ID: 'notifications'
       SCREENSHOT_REQUEST_SERVICE_GROUP_ID: 'screenshot-requests'
+      OTEL_TRACE_COLLECTOR_URL: 'http://jaeger:4317'
     ports:
       - "8002:8002"
 
@@ -92,6 +95,7 @@ services:
     depends_on:
       - kafka
       - mongo
+      - minio
     environment:
       PORT: 8003
       MONGO_HOST: mongo
@@ -108,10 +112,11 @@ services:
       SCREENSHOT_REQUEST_SERVICE_GROUP_ID: 'screenshot-requests'
       MINIO_ENDPOINT: 'minio'
       MINIO_PORT: '9000'
-      MINIO_ACCESS_KEY: '6WbKp35bPihUG7RKXXg2'
-      MINIO_SECRET_KEY: 'AtcRtGT6Prq8rplVU8stWzQ2A81W2H9D4f2RVhvl'
+      MINIO_ACCESS_KEY: 'Ns82cw1r0TTDRFOSJpVl'
+      MINIO_SECRET_KEY: '9hibbsLyn41CH5xeekThs7iPUA8ZpEQLkRfG3ixI'
       MINIO_BUCKET: 'screenshots'
       PUPPETEER_EXECUTABLE_PATH: "/usr/bin/chromium"
+      OTEL_TRACE_COLLECTOR_URL: 'http://jaeger:4317'
     ports:
       - "8003:8003"
 
@@ -138,11 +143,12 @@ services:
       SCREENSHOT_META_SERVICE_GROUP_ID: 'screenshot-meta'
       NOTIFICATION_SERVICE_GROUP_ID: 'notifications'
       SCREENSHOT_REQUEST_SERVICE_GROUP_ID: 'screenshot-requests'
+      OTEL_TRACE_COLLECTOR_URL: 'http://jaeger:4317'
     ports:
       - "8004:8004"
 
   minio:
-    image: minio/minio
+    image: minio/minio:latest
     command: server /data --console-address ":9001"
     ports:
       - "9000:9000"  # API port
@@ -151,8 +157,14 @@ services:
       MINIO_ROOT_USER: minioadmin
       MINIO_ROOT_PASSWORD: minioadmin
     volumes:
-      - minio_data:/data
+      - minio_data1:/data1
+      - minio_data2:/data2
 
+#  curl-create-bucket:
+#    image: curl:latest
+#    command:
+#      - curl
+#      - http://minio:9000/
 
   keycloak_web:
     platform: 'linux/amd64'
@@ -259,7 +271,8 @@ volumes:
   kafka-volume:
   kafka_data:
   postgres_data:
-  minio_data:
+  minio_data1:
+  minio_data2:
 
 
 

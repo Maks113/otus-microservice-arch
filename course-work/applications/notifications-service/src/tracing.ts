@@ -1,9 +1,11 @@
+import { Span } from '@opentelemetry/api';
 import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
 import { AsyncLocalStorageContextManager } from '@opentelemetry/context-async-hooks';
 import { CompositePropagator, W3CBaggagePropagator, W3CTraceContextPropagator } from '@opentelemetry/core';
 import { OTLPLogExporter } from '@opentelemetry/exporter-logs-otlp-grpc';
 import { PrometheusExporter } from '@opentelemetry/exporter-prometheus';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-grpc';
+import { MessageInfo } from '@opentelemetry/instrumentation-kafkajs';
 import { PinoInstrumentation } from '@opentelemetry/instrumentation-pino';
 import { JaegerPropagator } from '@opentelemetry/propagator-jaeger';
 import { Resource } from '@opentelemetry/resources';
@@ -26,7 +28,7 @@ const otelSDK = new NodeSDK({
     port: 8081,
   }),
   resource: new Resource({
-    [ATTR_SERVICE_NAME]: `consumer-service`,
+    [ATTR_SERVICE_NAME]: `notifications-service`,
   }),
   spanProcessors: [new BatchSpanProcessor(traceExporter)],
   logRecordProcessors: [new BatchLogRecordProcessor(logExporter)],

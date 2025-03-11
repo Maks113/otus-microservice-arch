@@ -40,18 +40,23 @@ export class PageCaptureService implements OnModuleInit, OnModuleDestroy {
   }
 
   async makePageCapture(link: string, id: string): Promise<string> {
-    this.logger.info({ message: `Make page capture: ${link}`, id });
-    const filepath = `/tmp/${id}.png`;
-    const page = await this.browser.newPage();
-    await page.goto(link, { waitUntil: 'networkidle2' });
+    try {
+      this.logger.info({ message: `Make page capture: ${link}`, id });
+      const filepath = `/tmp/${id}.png`;
+      const page = await this.browser.newPage();
+      await page.goto(link, { waitUntil: 'networkidle2' });
 
-    await page.screenshot({ fullPage: true, path: filepath });
+      await page.screenshot({ fullPage: true, path: filepath });
 
-    return filepath;
+      return filepath;
+    } catch (e) {
+      if (!(e instanceof Error)) throw e;
+      throw new Error(`Error creating a capture of the page: ${e.message}`, e);
+    }
   }
 
   deleteFile(filepath: string) {
-    this.logger.info({ message: `Delete file: ${filepath}` });
+    this.logger.info({ message: `Delete local file: ${filepath}` });
     if (fs.existsSync(filepath)) {
       fs.unlinkSync(filepath);
     }
@@ -59,17 +64,22 @@ export class PageCaptureService implements OnModuleInit, OnModuleDestroy {
 
   async uploadFileToStorage(filepath: string, meta: Record<string, string>) {
     this.logger.info({ message: `Upload file to s3: ${filepath}`, meta });
-    await this.minioClient.putObject(
-      this.config.get<string>('minio.bucket')!,
-      path.basename(filepath),
-      fs.createReadStream(filepath),
-      fs.statSync(filepath).size,
-      {
-        'Content-Type': 'image/png',
-        ...meta
-      },
-    );
-    return path.basename(filepath);
+    try {
+      await this.minioClient.putObject(
+        this.config.get<string>('minio.bucket')!,
+        path.basename(filepath),
+        fs.createReadStream(filepath),
+        fs.statSync(filepath).size,
+        {
+          'Content-Type': 'image/png',
+          ...meta,
+        },
+      );
+      return path.basename(filepath);
+    } catch (e) {
+      if (!(e instanceof Error)) throw e;
+      throw new Error(`Error sending a capture to the s3: ${e.message}`, e);
+    }
   }
 
   async deleteFileFromStorage(filename: string) {
@@ -77,17 +87,25 @@ export class PageCaptureService implements OnModuleInit, OnModuleDestroy {
     await this.minioClient.removeObject(
       this.config.get<string>('minio.bucket')!,
       filename,
-    )
+    );
   }
 
   async createHmacStream(filePath: string, algorithm = 'sha256'): Promise<string> {
     return new Promise((resolve, reject) => {
-      const hmac = createHmac(algorithm, '');
-      const stream = fs.createReadStream(filePath);
+      try {
+        const hmac = createHmac(algorithm, '');
+        const stream = fs.createReadStream(filePath);
 
-      stream.on('error', (error) => reject(new Error(`File read error: ${error.message}`)));
-      stream.on('data', (chunk) => hmac.update(chunk));
-      stream.on('end', () => resolve(hmac.digest('hex')));
+        stream.on('error', (error) =>
+          reject(new Error(`File read error: ${error.message}`)),
+        );
+        stream.on('data', (chunk) => hmac.update(chunk));
+        stream.on('end', () => resolve(hmac.digest('hex')));
+      } catch (e) {
+        if (!(e instanceof Error)) reject(new Error(e));
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        reject(new Error(`Error creating a hash of the page: ${e.message}`, e));
+      }
     });
   }
 }

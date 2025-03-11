@@ -1,24 +1,20 @@
+import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
 import { AsyncLocalStorageContextManager } from '@opentelemetry/context-async-hooks';
 import { CompositePropagator, W3CBaggagePropagator, W3CTraceContextPropagator } from '@opentelemetry/core';
 import { OTLPLogExporter } from '@opentelemetry/exporter-logs-otlp-grpc';
 import { PrometheusExporter } from '@opentelemetry/exporter-prometheus';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-grpc';
-import { HttpInstrumentation } from '@opentelemetry/instrumentation-http';
-import { NestInstrumentation } from '@opentelemetry/instrumentation-nestjs-core';
 import { PinoInstrumentation } from '@opentelemetry/instrumentation-pino';
-import { B3InjectEncoding, B3Propagator } from '@opentelemetry/propagator-b3';
 import { JaegerPropagator } from '@opentelemetry/propagator-jaeger';
 import { Resource } from '@opentelemetry/resources';
 import { BatchLogRecordProcessor } from '@opentelemetry/sdk-logs';
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-base';
 import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
-import { IncomingMessage } from 'http';
-import { ClientRequest } from 'node:http';
 import * as process from 'process';
 
 const collectorOptions = {
-  url: 'http://jaeger:4317',
+  url: process.env.OTEL_TRACE_COLLECTOR_URL ?? '',
 };
 const traceExporter = new OTLPTraceExporter(collectorOptions);
 const logExporter = new OTLPLogExporter(collectorOptions);
@@ -38,14 +34,9 @@ const otelSDK = new NodeSDK({
       new JaegerPropagator(),
       new W3CTraceContextPropagator(),
       new W3CBaggagePropagator(),
-      new B3Propagator(),
-      new B3Propagator({
-        injectEncoding: B3InjectEncoding.MULTI_HEADER,
-      }),
     ],
   }),
   instrumentations: [
-    // getNodeAutoInstrumentations(),
     new PinoInstrumentation({
       logKeys: {
         traceId: 'traceId',
@@ -53,13 +44,22 @@ const otelSDK = new NodeSDK({
         traceFlags: 'traceFlags',
       },
     }),
-    new NestInstrumentation({}),
-    new HttpInstrumentation({
-      requestHook: (span, request: ClientRequest | IncomingMessage | any) => {
-        span.updateName(`${request.method} ${request.path ?? ''}`)
-        span.setAttribute('request.uuid', request.id)
-        span.setAttribute('user_agent.original', request.headers['user-agent'])
-        span.setAttribute('server.address', request.host)
+    getNodeAutoInstrumentations({
+      '@opentelemetry/instrumentation-mongoose': { enabled: false },
+      '@opentelemetry/instrumentation-mongodb': { enabled: false },
+      '@opentelemetry/instrumentation-net': { enabled: false },
+      '@opentelemetry/instrumentation-dns': { enabled: false },
+
+      '@opentelemetry/instrumentation-kafkajs': { enabled: true },
+      '@opentelemetry/instrumentation-nestjs-core': { enabled: true },
+      '@opentelemetry/instrumentation-http': {
+        enabled: true,
+        requestHook: (span, request: any) => {
+          span.updateName(`${request.method} ${request.path ?? ''}`);
+          span.setAttribute('request.uuid', request.id);
+          span.setAttribute('user_agent.original', request.headers['user-agent']);
+          span.setAttribute('server.address', request.host);
+        },
       },
     }),
   ],
@@ -67,8 +67,6 @@ const otelSDK = new NodeSDK({
 
 export default otelSDK;
 
-// You can also use the shutdown method to gracefully shut down the SDK before process shutdown
-// or on some operating system signal.
 process.on('SIGTERM', () => {
   otelSDK
     .shutdown()

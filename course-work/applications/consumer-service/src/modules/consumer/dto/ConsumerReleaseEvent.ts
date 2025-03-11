@@ -1,8 +1,6 @@
 import { IsNotEmpty, IsString } from 'class-validator';
-import { TraceCarrier } from '../../../common/TraceCarrier';
-import { TraceEvent } from '../../../common/TraceEvent';
 
-export class ConsumerReleaseEvent extends TraceEvent {
+export class ConsumerReleaseEvent {
   @IsNotEmpty()
   @IsString()
   requestId: string;
@@ -11,8 +9,7 @@ export class ConsumerReleaseEvent extends TraceEvent {
   @IsString()
   email: string;
 
-  constructor(requestId: string, email: string, traceCarrier?: TraceCarrier) {
-    super(traceCarrier);
+  constructor(requestId: string, email: string) {
     this.email = email;
     this.requestId = requestId;
   }

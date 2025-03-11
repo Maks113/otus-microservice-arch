@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { PrometheusModule } from '@willsoto/nestjs-prometheus';
 import { ConfigurationModule } from '../domains/configuration/configuration.module';
-import { NotificationsModule } from '../domains/notifications/notifications.module';
+import { NotificationsModule } from '../modules/notifications/notifications.module';
 import { PinoLoggerModule } from '../domains/pino-logger/pino-logger.module';
 
 @Module({

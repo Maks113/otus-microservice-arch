@@ -11,14 +11,13 @@ import { Outbox, OutboxDocument } from './schemas/outbox';
 @Injectable()
 export class OutboxWorker implements OnModuleInit, OnModuleDestroy {
   intervalId: NodeJS.Timeout;
-  tracer: Tracer;
+  tracer: Tracer = opentelemetry.trace.getTracer(OutboxWorker.name);
 
   constructor(
     @InjectModel(Outbox.name) private outboxModel: Model<Outbox>,
     private readonly logger: PinoLogger,
     private readonly outboxEventsRouter: OutboxEventsRouter,
   ) {
-    this.tracer = opentelemetry.trace.getTracer(OutboxWorker.name);
     this.logger.setContext(OutboxWorker.name);
   }
 
@@ -38,30 +37,42 @@ export class OutboxWorker implements OnModuleInit, OnModuleDestroy {
   }
 
   private startPolling() {
-    this.intervalId = setInterval(async () => {
-      const pendingEvents = await this.getPendingEvents();
-      if (pendingEvents.length > 0) {
-        this.logger.info(`Outbox tick: ${pendingEvents.length}`);
-      }
+    void this.pollingTick().then();
+  }
 
-      for (let event of pendingEvents) {
-        const context = api.propagation.extract(api.context.active(), event.traceCarrier);
-        await api.context.with(context, async () => {
-          const span = this.tracer.startSpan('Outbox send event', {
-            attributes: {
-              'app.outbox.id': event.id,
-              'app.outbox.topic': event.topic,
-              'app.outbox.status': event.status,
-              'app.outbox.attempts': event.attempts,
-            }
-          });
+  private async pollingTick(): Promise<void> {
+    await this.handleOutbox();
+    this.intervalId = setTimeout(() => void this.pollingTick(), 200);
+  }
 
+  async handleOutbox() {
+    const pendingEvents = await this.getPendingEvents();
+    if (pendingEvents.length > 0) {
+      this.logger.info(`Outbox tick: ${pendingEvents.length}`);
+    }
+
+    for (const event of pendingEvents) {
+      this.logger.info({
+        event,
+        msg: 'Outbox send event'
+      })
+      const context = api.propagation.extract(api.context.active(), event.traceCarrier);
+      await api.context.with(context, async () => {
+        await this.tracer.startActiveSpan('Outbox send event', {
+          attributes: {
+            'app.outbox.id': event.id as string,
+            'app.outbox.topic': event.topic,
+            'app.outbox.status': event.status,
+            'app.outbox.attempts': event.attempts,
+            'app.outbox.payload': JSON.stringify(event.payload)
+          },
+        }, async (span) => {
           const result = await this.sendEvent(event);
           await this.updateOutboxStatus(event, result);
           span.end();
         });
-      }
-    }, 1_000);
+      });
+    }
   }
 
   async getPendingEvents(): Promise<OutboxDocument[]> {

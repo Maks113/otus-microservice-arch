@@ -1,3 +1,4 @@
+import otelSDK from './tracing';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
@@ -8,6 +9,8 @@ import { ClassValidatorPlugin } from './plugins/class-validator.plugin';
 import { LoggerPlugin } from './plugins/logger.plugin';
 
 async function bootstrap() {
+  otelSDK.start();
+
   const configContext = await NestFactory.createApplicationContext(
     ConfigurationModule
   );

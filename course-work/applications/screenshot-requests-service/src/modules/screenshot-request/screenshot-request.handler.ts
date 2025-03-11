@@ -33,33 +33,28 @@ export class ScreenshotRequestHandler implements OnModuleInit {
   @EventPattern('consumer.keep.result')
   async consumerKeepResult(@Payload() payload: ConsumerKeepResultEvent): Promise<void> {
     this.logger.info({ event: 'consumer.keep.result', payload });
-    await api.context.with(TraceEvent.getEventContext(payload.traceCarrier), async () => {
       if (payload.error) {
-        await this.screenshotRequestSagaService.compensate(payload.requestId, payload.error);
+        await this.screenshotRequestSagaService.nextStep(payload.requestId, payload);
       } else {
         await this.screenshotRequestSagaService.nextStep(payload.requestId, payload);
       }
-    });
   }
 
   @EventPattern('consumer.release.result')
   async consumerReleaseResult(@Payload() payload: ConsumerReleaseResultEvent): Promise<void> {
     this.logger.info({ event: 'consumer.release.result', payload });
-    await api.context.with(TraceEvent.getEventContext(payload.traceCarrier), async () => {
-      await this.screenshotRequestSagaService.nextStep(payload.requestId, payload);
-    });
+    await this.screenshotRequestSagaService.nextStep(payload.requestId, payload);
+
   }
 
   @EventPattern('page-capture.create.result')
   async pageCaptureCreateResult(@Payload() payload: PageCaptureCreateResultEvent): Promise<void> {
     this.logger.info({ event: 'consumer.keep.result', payload });
-    await api.context.with(TraceEvent.getEventContext(payload.traceCarrier), async () => {
       if (payload.error) {
-        await this.screenshotRequestSagaService.compensate(payload.requestId, payload.error);
+        await this.screenshotRequestSagaService.nextStep(payload.requestId, payload);
       } else {
         await this.screenshotRequestSagaService.nextStep(payload.requestId, payload);
       }
-    });
   }
 
   @EventPattern('page-capture.delete.result')
@@ -75,7 +70,7 @@ export class ScreenshotRequestHandler implements OnModuleInit {
     this.logger.info({ event: 'screenshot-meta.create.result', payload });
     await api.context.with(TraceEvent.getEventContext(payload.traceCarrier), async () => {
       if (payload.error) {
-        await this.screenshotRequestSagaService.compensate(payload.requestId, payload.error);
+        await this.screenshotRequestSagaService.nextStep(payload.requestId, payload);
       } else {
         await this.screenshotRequestSagaService.nextStep(payload.requestId, payload);
       }

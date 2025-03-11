@@ -1,14 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import opentelemetry, { Tracer } from '@opentelemetry/api';
+import opentelemetry, { trace, Tracer } from '@opentelemetry/api';
 import { api } from '@opentelemetry/sdk-node';
 import { Model, Types } from 'mongoose';
 import { Span } from 'nestjs-otel';
 import { PinoLogger } from 'nestjs-pino';
 import { TraceCarrier } from '../../common/TraceCarrier';
 import { RequestCreateDto } from './dto/requestCreateDto';
-import { ScreenshotRequest } from './schemas/screenshot-request';
+import { ScreenshotRequest, ScreenshotRequestDocument } from './schemas/screenshot-request';
 import { ScreenshotRequestService } from './screenshot-request.service';
+
+export type SagaStep = {
+  action: (request: ScreenshotRequestDocument | null, payload: any, traceCarrier?: TraceCarrier) => Promise<void>;
+  compensation: ((request: ScreenshotRequestDocument, payload: any, traceCarrier?: TraceCarrier) => Promise<void>) | null;
+}
 
 @Injectable()
 export class ScreenshotRequestSagaService {
@@ -23,88 +28,101 @@ export class ScreenshotRequestSagaService {
     this.logger.setContext(ScreenshotRequestSagaService.name);
   }
 
-  private steps: {
-    action: (requestId: string | Types.ObjectId, payload: any, traceCarrier?: TraceCarrier) => Promise<void>,
-    compensation: ((requestId: string, payload: any, traceCarrier?: TraceCarrier) => Promise<void>) | null
-  }[] = [
+  private steps: SagaStep[] = [
     { action: this.createRequest.bind(this), compensation: this.failRequest.bind(this) },
     { action: this.keepUserRequest.bind(this), compensation: this.releaseUserRequestCompensation.bind(this) },
     { action: this.takePageCapture.bind(this), compensation: this.deletePageCapture.bind(this) },
     { action: this.saveMeta.bind(this), compensation: null },
     { action: this.releaseUserRequest.bind(this), compensation: null },
-    { action: this.sendNotification.bind(this), compensation: null },
+    { action: this.sendSuccessNotification.bind(this), compensation: null },
   ];
 
   @Span()
   async startSaga(data: RequestCreateDto): Promise<void> {
-    await this.steps[0].action('', data);
+    await this.steps[0].action(null, data);
   }
 
   // Переход к следующему шагу
   @Span()
   async nextStep(requestId: Types.ObjectId | string, payload: any): Promise<void> {
     const request = await this.screenshotRequestModel.findById(requestId).exec();
-    if (!request) {
-      this.logger.error('Cannot find screenshotRequest');
-      return;
-    }
-    if (['compensating', 'failed', 'completed'].includes(request.status)) {
-      return;
-    }
-    request.currentStep += 1;
-    request.payload = { ...request.payload, ...payload };
-    if (request.currentStep >= this.steps.length - 1) {
-      request.status = 'completed';
-    }
+    const span = trace.getActiveSpan();
+    span?.setAttributes({
+      'app.saga.id': request?._id.toString(),
+      'app.saga.currentStep': request?.currentStep,
+      'app.saga.payload': JSON.stringify(request?.payload),
+    });
     this.logger.info({
       title: 'next step',
       request,
     });
-    await request.save();
-    const traceCarrier = {};
-    api.propagation.inject(api.context.active(), traceCarrier);
-    await this.steps[request.currentStep].action(requestId, request.payload, traceCarrier);
-  }
 
-  // Запуск компенсации
-  @Span()
-  async compensate(requestId: string, error: string): Promise<void> {
-    const request = await this.screenshotRequestModel.findById(requestId).exec();
     if (!request) {
       this.logger.error('Cannot find screenshotRequest');
       return;
     }
-    request.status = 'compensating';
-    request.errors.push(error);
+    if (['failed', 'completed'].includes(request.status)) {
+      return;
+    }
+    if (!payload.error && request.status !== 'compensating') {
+      await this.runAction(request, payload);
+    } else {
+      await this.compensate(request, payload.error);
+    }
+    span?.end();
+  }
+
+  @Span()
+  private async runAction(request: ScreenshotRequestDocument, payload: any): Promise<void> {
+    request.currentStep += 1;
+    this.logger.info({
+      msg: 'run next action',
+      step: request.currentStep,
+    });
+    request.payload = { ...request.payload, ...payload };
+    if (request.currentStep >= this.steps.length - 1) {
+      request.status = 'completed';
+    }
     await request.save();
+
     const traceCarrier = {};
     api.propagation.inject(api.context.active(), traceCarrier);
-    for (let i = request.currentStep; i >= 0; i--) {
-      await this.steps[i].compensation?.(requestId, request.payload, traceCarrier);
+    await this.steps[request.currentStep].action(request, request.payload, traceCarrier);
+  }
+
+  // Запуск компенсации
+  @Span()
+  private async compensate(request: ScreenshotRequestDocument, error?: string): Promise<void> {
+    request.currentStep -= 1;
+    this.logger.info({
+      msg: 'compensate step',
+      step: request.currentStep,
+    });
+    if (request.currentStep < 0) {
+      request.status = 'failed';
+      return;
+    }
+    request.status = 'compensating';
+    if (error) request.errors.push(error);
+    await request.save();
+
+    const traceCarrier = {};
+    api.propagation.inject(api.context.active(), traceCarrier);
+    const compensationFn = this.steps[request.currentStep].compensation;
+    if (!compensationFn) {
+      void this.compensate(request, error).then();
+    } else {
+      await this.steps[request.currentStep].compensation?.(request, request.payload, traceCarrier);
     }
   }
 
-  // async markCompensated(requestId: string) {
-  //   const request = await this.screenshotRequestModel.findById(requestId).exec();
-  //   if (!request) {
-  //     this.logger.error('[markCompensated] Cannot find screenshotRequest');
-  //     return;
-  //   }
-  //   request.compensatedSteps += 1;
-  //   this.logger.info({ title: 'Compensation', request });
-  //   if (request.compensatedSteps === request.currentStep) {
-  //     request.status = 'failed';
-  //   }
-  //   await request.save();
-  // }
-
   @Span()
-  async createRequest(requestId, payload) {
+  async createRequest(_: ScreenshotRequestDocument, payload) {
+    const request = await this.screenshotRequestService.createRequest(payload);
     this.logger.info({
-      saga: requestId,
+      saga: request?._id,
       msg: 'createRequest',
     });
-    const request = await this.screenshotRequestService.createRequest(payload);
     if (!request) {
       throw new Error('Cant create request');
     }
@@ -112,77 +130,77 @@ export class ScreenshotRequestSagaService {
   }
 
   @Span()
-  async failRequest(requestId, payload, traceCarrier) {
+  async failRequest(request: ScreenshotRequestDocument, payload, traceCarrier) {
     this.logger.info({
-      saga: requestId,
+      saga: request?._id,
       msg: 'failRequest',
     });
-    await this.screenshotRequestService.failRequest(requestId);
-    // await this.markCompensated(requestId);
+    await this.screenshotRequestService.failRequest(request);
+    await this.screenshotRequestService.sendFailNotification(request, payload, traceCarrier);
   }
 
   @Span()
-  async keepUserRequest(requestId, payload, traceCarrier) {
+  async keepUserRequest(request: ScreenshotRequestDocument, payload, traceCarrier) {
     this.logger.info({
-      saga: requestId,
+      saga: request?._id,
       msg: 'keepUserRequest',
     });
-    await this.screenshotRequestService.keepUserRequest(requestId, payload, traceCarrier);
+    await this.screenshotRequestService.keepUserRequest(request, payload, traceCarrier);
   }
 
   @Span()
-  async releaseUserRequest(requestId, payload, traceCarrier) {
+  async releaseUserRequest(request: ScreenshotRequestDocument, payload, traceCarrier) {
     this.logger.info({
-      saga: requestId,
+      saga: request?._id,
       msg: 'releaseUserRequest',
     });
-    await this.screenshotRequestService.releaseUserRequest(requestId, payload, traceCarrier);
+    await this.screenshotRequestService.releaseUserRequest(request, payload, traceCarrier);
   }
 
   @Span()
-  async releaseUserRequestCompensation(requestId, payload, traceCarrier) {
+  async releaseUserRequestCompensation(request: ScreenshotRequestDocument, payload, traceCarrier) {
     this.logger.info({
-      saga: requestId,
+      saga: request?._id,
       msg: 'releaseUserRequestCompensation',
     });
-    await this.screenshotRequestService.releaseUserRequest(requestId, payload, traceCarrier);
-    // await this.markCompensated(requestId);
+    await this.screenshotRequestService.releaseUserRequest(request, payload, traceCarrier);
+    // await this.markCompensated(request);
   }
 
   @Span()
-  async takePageCapture(requestId, payload, traceCarrier) {
+  async takePageCapture(request: ScreenshotRequestDocument, payload, traceCarrier) {
     this.logger.info({
-      saga: requestId,
+      saga: request?._id,
       msg: 'takePageCapture',
     });
-    await this.screenshotRequestService.takePageCapture(requestId, payload, traceCarrier);
+    await this.screenshotRequestService.takePageCapture(request, payload, traceCarrier);
   }
 
   @Span()
-  async deletePageCapture(requestId, payload, traceCarrier) {
+  async deletePageCapture(request: ScreenshotRequestDocument, payload, traceCarrier) {
     this.logger.info({
-      saga: requestId,
+      saga: request?._id,
       msg: 'deletePageCapture',
     });
-    await this.screenshotRequestService.deletePageCapture(requestId, payload, traceCarrier);
-    // await this.markCompensated(requestId);
+    await this.screenshotRequestService.deletePageCapture(request, payload, traceCarrier);
+    // await this.markCompensated(request);
   }
 
   @Span()
-  async saveMeta(requestId, payload, traceCarrier) {
+  async saveMeta(request: ScreenshotRequestDocument, payload, traceCarrier) {
     this.logger.info({
-      saga: requestId,
+      saga: request?._id,
       msg: 'saveMeta',
     });
-    await this.screenshotRequestService.addScreenshotMeta(requestId, payload, traceCarrier);
+    await this.screenshotRequestService.addScreenshotMeta(request, payload, traceCarrier);
   }
 
   @Span()
-  async sendNotification(requestId, payload, traceCarrier) {
+  async sendSuccessNotification(request: ScreenshotRequestDocument, payload, traceCarrier) {
     this.logger.info({
-      saga: requestId,
-      msg: 'sendNotification',
+      saga: request?._id,
+      msg: 'sendSuccessNotification',
     });
-    await this.screenshotRequestService.sendNotification(requestId, payload, traceCarrier);
+    await this.screenshotRequestService.sendSuccessNotification(request, payload, traceCarrier);
   }
 }

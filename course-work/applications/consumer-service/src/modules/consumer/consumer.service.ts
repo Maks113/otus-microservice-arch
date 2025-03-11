@@ -11,7 +11,8 @@ import { ConsumerRequests } from './schemas/consumerRequests';
 export class ConsumerService {
   constructor(
     @InjectConnection() private readonly connection: Connection,
-    @InjectModel(ConsumerRequests.name) private consumerModel: Model<ConsumerRequests>,
+    @InjectModel(ConsumerRequests.name)
+    private consumerModel: Model<ConsumerRequests>,
     private readonly logger: PinoLogger,
   ) {
     this.logger.setContext(ConsumerService.name);
@@ -21,63 +22,71 @@ export class ConsumerService {
     const session = await this.connection.startSession();
     let error: null | string = null;
     await session.withTransaction(async (session) => {
-      const dayUserRequests = await this.consumerModel
-        .countDocuments({
-          email: event.email,
-          createdAt: {
-            $gte: startOfDay(new Date()),
-            $lte: endOfDay(new Date()),
-          },
-        });
+      const dayUserRequests = await this.consumerModel.countDocuments({
+        email: event.email,
+        createdAt: {
+          $gte: startOfDay(new Date()),
+          $lte: endOfDay(new Date()),
+        },
+      });
 
-      const activeUserRequests = await this.consumerModel
-        .countDocuments({
-          email: event.email,
-          status: 'keep',
-        });
+      const activeUserRequests = await this.consumerModel.countDocuments({
+        email: event.email,
+        status: 'keep',
+      });
 
-      const isDuplicate = Boolean(await this.consumerModel
-        .countDocuments({
+      const isDuplicate = Boolean(
+        await this.consumerModel.countDocuments({
           requestsId: event.requestId,
           email: event.email,
-        }));
+        }),
+      );
 
       this.logger.info({
         event,
         isDuplicate,
         dayUserRequests,
         activeUserRequests,
-      })
+      });
 
       if (isDuplicate) {
         return;
       }
 
       if (dayUserRequests >= 100) {
-        error = 'The user has reached the requests limit (100) for the day. Try again later';
+        error =
+          'The user has reached the requests limit (100) for the day. Try again later';
         return;
       }
 
-      if (activeUserRequests >= 3) {
+      if (activeUserRequests > 3) {
         error = 'Only 3 requests from the user can be executed in parallel';
         return;
       }
 
-      await this.consumerModel.create([{
-        requestId: event.requestId,
-        email: event.email,
-        status: 'keep',
-      }], { session });
+      await this.consumerModel.create(
+        [
+          {
+            requestId: event.requestId,
+            email: event.email,
+            status: 'keep',
+          },
+        ],
+        { session },
+      );
     });
 
     return error;
   }
 
   async releaseUserRequest(event: ConsumerReleaseEvent) {
-    await this.consumerModel.findOneAndUpdate({
-      email: event.email,
-      requestId: event.requestId,
-      status: 'keep',
-    }, { $set: { status: 'released' } })
+    await this.consumerModel.findOneAndUpdate(
+      {
+        email: event.email,
+        requestId: event.requestId,
+        status: 'keep',
+      },
+      { $set: { status: 'released' } },
+    );
   }
 }

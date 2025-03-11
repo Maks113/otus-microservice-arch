@@ -26,7 +26,7 @@ const otelSDK = new NodeSDK({
     port: 8081,
   }),
   resource: new Resource({
-    [ATTR_SERVICE_NAME]: `consumer-service`,
+    [ATTR_SERVICE_NAME]: `page-capture-service`,
   }),
   spanProcessors: [new BatchSpanProcessor(traceExporter)],
   logRecordProcessors: [new BatchLogRecordProcessor(logExporter)],

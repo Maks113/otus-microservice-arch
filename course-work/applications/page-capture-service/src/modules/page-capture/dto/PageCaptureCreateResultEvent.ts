@@ -22,7 +22,14 @@ export class PageCaptureCreateResultEvent {
   @IsString()
   error: string | null;
 
-  constructor(requestId: string, link: string, hash: string | null, imageName: string | null, status: 'created' | 'failed', error = null) {
+  constructor(
+    requestId: string,
+    link: string,
+    hash: string | null,
+    imageName: string | null,
+    status: 'created' | 'failed',
+    error: null | string = null,
+  ) {
     this.requestId = requestId;
     this.link = link;
     this.hash = hash;

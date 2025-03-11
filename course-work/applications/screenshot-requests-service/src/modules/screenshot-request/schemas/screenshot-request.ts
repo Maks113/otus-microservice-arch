@@ -22,15 +22,6 @@ export class ScreenshotRequest {
 
   @Prop({ required: false })
   spanId: string;
-
-  // @Prop({ required: true })
-  // link: string;
-  //
-  // @Prop({ required: false })
-  // imageName: string | undefined;
-  //
-  // @Prop({ required: false })
-  // metadataId: string | undefined;
 }
 
 export const ScreenshotRequestSchema = SchemaFactory.createForClass(ScreenshotRequest);
