@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "kafka.fullname" . }}
+spec:
+  serviceName: {{ include "kafka.headless-service" . }}
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "kafka.fullname" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "kafka.fullname" . }}
+    spec:
+{{/*      initContainers:*/}}
+{{/*        - name: init-kafka*/}}
+{{/*          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"*/}}
+{{/*          command:*/}}
+{{/*            - sh*/}}
+{{/*            - -c*/}}
+{{/*            - |*/}}
+{{/*              if [ ! -f /bitnami/kafka/meta.properties ]; then*/}}
+{{/*                /opt/bitnami/kafka/bin/kafka-storage.sh format \*/}}
+{{/*                  --cluster-id {{ .Values.clusterId }} \*/}}
+{{/*                  --config /etc/kafka/server.properties*/}}
+{{/*              fi*/}}
+{{/*          volumeMounts:*/}}
+{{/*            - name: data*/}}
+{{/*              mountPath: /bitnami/kafka*/}}
+{{/*            - name: config*/}}
+{{/*              mountPath: /etc/kafka*/}}
+      containers:
+        - name: kafka
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: HEADLESS_SERVICE
+              value: {{ include "kafka.headless-service" . }}
+          command:
+            - sh
+            - -c
+            - |
+              export NODE_ID=$(hostname | sed 's/.*-//')
+              exec /opt/bitnami/kafka/bin/kafka-server-start.sh \
+                /etc/kafka/server.properties \
+                --override node.id=${NODE_ID}
+          ports:
+            - containerPort: 9092
+              name: client
+            - containerPort: 9093
+              name: controller
+          volumeMounts:
+            - name: config
+              mountPath: /etc/kafka
+            - name: data
+              mountPath: /bitnami/kafka
+          resources:
+          {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+        - name: config
+          configMap:
+            name: {{ include "kafka.fullname" . }}-configmap
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: {{ .Values.persistence.accessModes }}
+        resources:
+          requests:
+            storage: {{ .Values.persistence.size }}
+      {{- if .Values.persistence.storageClass }}
+        storageClassName: {{ .Values.persistence.storageClass }}
+      {{- end }}

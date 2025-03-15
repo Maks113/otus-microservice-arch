@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: {{ include "fullname" . }}-kafka-service
   labels:
-    app: minio
+    app: kafka-service
 spec:
   type: ClusterIP
   ports:
@@ -14,4 +14,4 @@ spec:
       targetPort: 9001
       name: console
   selector:
-    app: minio
+    app: kafka-service

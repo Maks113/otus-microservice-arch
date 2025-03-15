@@ -1,5 +1,0 @@
-apiVersion: v2
-name: valid-page
-description: A Helm chart for web-page screenshot verification app
-version: 1.0.0
-appVersion: "1.0"

@@ -1,0 +1,100 @@
+kafka:
+  enabled: true
+  zookeeper:
+    enabled: false
+  listeners:
+    client:
+      protocol: 'PLAINTEXT'
+  kraft:
+    enabled: true
+    clusterId: 'ZgYhN123S8q9r7QwRDqriA'
+
+kafka-ui:
+  enabled: true
+  envs:
+    config:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: valid-page-kafka-controller-headless:9092
+
+jaeger:
+  enabled: true
+
+mongodb:
+  enabled: true
+  architecture: replicaset
+  image:
+    registry: docker.io
+    repository: bitnami/mongodb
+    tag: 4.4.15
+    digest: ""
+
+minio:
+  enabled: true
+
+keycloak:
+  enabled: true
+
+
+#screenshotRequestsService:
+#  image: maks113/valid-page-screenshot-requests-service
+#  serviceId: screenshot-requests
+#
+#consumerService:
+#  image: maks113/valid-page-consumer-service
+#  serviceId: consumer
+#
+#pageCaptureService:
+#  image: maks113/valid-page-page-capture-service
+#  serviceId: page-capture
+#
+#screenshotMetaService:
+#  image: maks113/valid-screenshot-meta-service
+#  serviceId: screenshot-meta
+#
+#notificationService:
+#  image: maks113/valid-page-notification-service
+#  serviceId: notifications
+#
+#kafka:
+#  image: bitnami/kafka:3.9.0
+#  replicas: 1
+#  volumeSize: 200Mi
+#
+#keycloak:
+#  image: quay.io/keycloak/keycloak:23.0.7
+#  adminUser: admin
+#  adminPassword: admin
+#
+#postgres:
+#  replicas: 1
+#  image: postgres:15
+#  bdName: keycloak
+#  volumeSize: 200Mi
+#  username: keycloak
+#  password: password
+#
+#minio:
+#  replicas: 1
+#  image: minio/minio:latest
+#  volumeSize: 200Mi
+#  rootUser: minioadmin
+#  rootPassword: minioadmin
+#  bucket: screenshots
+#  accessKey: ''
+#  secretKey: ''
+#
+#mongo:
+#  replicas: 1
+#  image: mongo:4.4.18
+#  volumeSize: 200Mi
+#  username: root
+#  password: example
+#
+#grafana:
+#  adminUser: admin
+#  adminPassword: admin
+#  datasources:
+#    prometheus:
+#      url: 1
+#      access: 2
+#      isDefault: true

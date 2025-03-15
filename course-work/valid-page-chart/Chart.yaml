@@ -1,0 +1,25 @@
+apiVersion: v2
+name: valid-page
+description: A Helm chart for web-page screenshot verification app
+version: 1.0.0
+appVersion: "1.0"
+
+dependencies:
+  - name: kafka
+    version: "31.5.0"
+    repository: https://charts.bitnami.com/bitnami
+  - name: jaeger
+    version: 5.1.12
+    repository: https://charts.bitnami.com/bitnami
+  - name: mongodb
+    version: 12.1.16
+    repository: https://charts.bitnami.com/bitnami
+  - name: keycloak
+    version: 24.4.13
+    repository: https://charts.bitnami.com/bitnami
+  - name: minio
+    version: 15.0.7
+    repository: https://charts.bitnami.com/bitnami
+  - name: kafka-ui
+    version: "0.7.6"
+    repository:  https://provectus.github.io/kafka-ui-charts

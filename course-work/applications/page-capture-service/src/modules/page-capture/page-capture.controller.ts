@@ -85,7 +85,7 @@ export class PageCaptureController implements OnModuleInit {
       span?.addEvent('Exception', {
         'exception.message': e.message,
         'exception.stack': e.stack,
-      })
+      });
       this.logger.error(e);
 
       this.screenshotRequestClient.emit(
