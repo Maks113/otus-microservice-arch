@@ -1,5 +1,0 @@
-apiVersion: v2
-name: kafka
-description: Apache Kafka with KRaft mode
-version: 1.0.0
-appVersion: 1.0.0

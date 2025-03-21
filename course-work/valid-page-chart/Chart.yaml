@@ -20,6 +20,9 @@ dependencies:
   - name: minio
     version: 15.0.7
     repository: https://charts.bitnami.com/bitnami
+  - name: grafana
+    version: 11.6.0
+    repository: https://charts.bitnami.com/bitnami
   - name: kafka-ui
     version: "0.7.6"
     repository:  https://provectus.github.io/kafka-ui-charts

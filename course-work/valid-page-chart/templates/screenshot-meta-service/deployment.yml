@@ -1,42 +1,54 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "fullname" . }}-notifications-service
+  name: {{ include "fullname" . }}-screenshot-meta
 spec:
   selector:
     matchLabels:
-      app: notifications-service
+      app: screenshot-meta
   template:
     metadata:
       labels:
-        app: notifications-service
+        app: screenshot-meta
     spec:
       containers:
-        - name: notifications-service
-          image: "maks113/valid-page-notification-service:1.0.0"
+        - name: screenshot-meta
+          image: "maks113/valid-page-screenshot-meta-service:1.0.1"
           ports:
-            - containerPort: 8001
+            - containerPort: 8004
           env:
             - name: PORT
-              value: "8001"
+              value: "8004"
 
               # Mongo
             - name: MONGO_HOST
-              value: {{ include "fullname" . }}-mongo-service
+              value: {{ .Release.Name }}-mongodb-headless
             - name: MONGO_PORT
               value: "27017"
             - name: MONGO_USER
-              value: {{ .Values.mongo.username }}
+              value: {{ .Values.screenshotMetaService.mongoUser }}
             - name: MONGO_PASSWORD
-              value: {{ .Values.mongo.password }}
+              value: {{ .Values.screenshotMetaService.mongoPassword }}
             - name: MONGO_DB_NAME
               value: "notifications"
 
             # Kafka configuration
             - name: KAFKA_BROKERS_CSV
-              value: "{{ include "fullname" . }}-kafka-service:9092"
+              value: "{{ .Release.Name }}-kafka-controller-headless:9092"
             - name: KAFKA_GROUP_ID
-              value: {{ .Values.notificationService.serviceId }}
+              value: {{ .Values.screenshotMetaService.serviceId }}
+
+            # MinIO configuration
+            - name: MINIO_ENDPOINT
+              value: {{ .Release.Name }}-minio
+            - name: MINIO_PORT
+              value: "9000"
+            - name: MINIO_ACCESS_KEY
+              value: {{ .Values.screenshotMetaService.minio.accessKey }}
+            - name: MINIO_SECRET_KEY
+              value: {{ .Values.screenshotMetaService.minio.secretKey }}
+            - name: MINIO_BUCKET
+              value: {{ .Values.screenshotMetaService.minio.bucket }}
 
             # Other group IDs
             - name: CONSUMER_SERVICE_GROUP_ID

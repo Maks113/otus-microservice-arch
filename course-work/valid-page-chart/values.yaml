@@ -16,12 +16,18 @@ kafka-ui:
       KAFKA_CLUSTERS_0_NAME: local
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: valid-page-kafka-controller-headless:9092
 
+# cqlsh -u cassandra -p cassandra
+# CREATE USER bn_jaeger WITH PASSWORD 'QEl7QMzqrR' SUPERUSER;
 jaeger:
   enabled: true
 
 mongodb:
   enabled: true
   architecture: replicaset
+  replicaCount: 3
+  auth:
+    usernames[0]: &mongoUser root
+    passwords[0]: &mongoPassword lPAHilIv0S
   image:
     registry: docker.io
     repository: bitnami/mongodb
@@ -35,26 +41,38 @@ keycloak:
   enabled: true
 
 
-#screenshotRequestsService:
-#  image: maks113/valid-page-screenshot-requests-service
-#  serviceId: screenshot-requests
-#
-#consumerService:
-#  image: maks113/valid-page-consumer-service
-#  serviceId: consumer
-#
-#pageCaptureService:
-#  image: maks113/valid-page-page-capture-service
-#  serviceId: page-capture
-#
-#screenshotMetaService:
-#  image: maks113/valid-screenshot-meta-service
-#  serviceId: screenshot-meta
-#
-#notificationService:
-#  image: maks113/valid-page-notification-service
-#  serviceId: notifications
-#
+screenshotRequestsService:
+  image: maks113/valid-page-screenshot-requests-service
+  serviceId: screenshot-requests
+  mongoUser: *mongoUser
+  mongoPassword: *mongoPassword
+
+consumerService:
+  image: maks113/valid-page-consumer-service
+  serviceId: consumer
+  mongoUser: *mongoUser
+  mongoPassword: *mongoPassword
+
+pageCaptureService:
+  image: maks113/valid-page-page-capture-service
+  serviceId: page-capture
+
+screenshotMetaService:
+  image: maks113/valid-screenshot-meta-service
+  serviceId: screenshot-meta
+  mongoUser: *mongoUser
+  mongoPassword: *mongoPassword
+  minio:
+    bucket: 'screenshots'
+    accessKey: 'hwK1qZcHnUsfIh9luKly'
+    secretKey: 'kTG09RqbMFVUj9DFjlS8L7ACA2khc5QuOpvDRkMj'
+
+notificationService:
+  image: maks113/valid-page-notification-service
+  serviceId: notifications
+  mongoUser: *mongoUser
+  mongoPassword: *mongoPassword
+
 #kafka:
 #  image: bitnami/kafka:3.9.0
 #  replicas: 1
@@ -83,13 +101,10 @@ keycloak:
 #  accessKey: ''
 #  secretKey: ''
 #
-#mongo:
-#  replicas: 1
-#  image: mongo:4.4.18
-#  volumeSize: 200Mi
-#  username: root
-#  password: example
-#
+mongo:
+  username: root
+  password: example
+
 #grafana:
 #  adminUser: admin
 #  adminPassword: admin

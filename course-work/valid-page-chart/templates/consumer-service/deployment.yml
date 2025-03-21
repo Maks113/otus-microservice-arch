@@ -13,26 +13,30 @@ spec:
     spec:
       containers:
         - name: consumer-service
-          image: "maks113/valid-page-consumer-service:1.0.0"
+          image: "maks113/valid-page-consumer-service:1.0.1"
           ports:
             - containerPort: 8002
           env:
             - name: PORT
               value: "8002"
             - name: MONGO_HOST
-              value: "{{ include "fullname" . }}-mongo-service"
+              value: {{ .Release.Name }}-mongodb-headless
             - name: MONGO_PORT
               value: "27017"
             - name: MONGO_USER
-              value: "{{ .Values.mongo.username }}"
+              value: {{ .Values.consumerService.mongoUser }}
             - name: MONGO_PASSWORD
-              value: "{{ .Values.mongo.password }}"
+              value: {{ .Values.consumerService.mongoPassword }}
             - name: MONGO_DB_NAME
-              value: "notifications"
+              value: "consumers"
+
+            # Kafka configuration
             - name: KAFKA_BROKERS_CSV
-              value: "{{ include "fullname" . }}-kafka-service:9092"
+              value: "{{ .Release.Name }}-kafka-controller-headless:9092"
             - name: KAFKA_GROUP_ID
-              value: {{ .Values.notificationService.serviceId }}
+              value: {{ .Values.consumerService.serviceId }}
+
+            # Other group IDs
             - name: CONSUMER_SERVICE_GROUP_ID
               value: {{ .Values.consumerService.serviceId }}
             - name: PAGE_CAPTURE_SERVICE_GROUP_ID
