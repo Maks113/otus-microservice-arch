@@ -1,3 +1,7 @@
+global:
+  redis:
+    password: '6iouL2YnSNMy0Q01GEaG2A' # FIXME generate new
+
 kafka:
   enabled: true
   zookeeper:
@@ -7,7 +11,7 @@ kafka:
       protocol: 'PLAINTEXT'
   kraft:
     enabled: true
-    clusterId: 'ZgYhN123S8q9r7QwRDqriA'
+    clusterId: 'ZgYhN123S8q9r7QwRDqriA' # FIXME generate new
 
 kafka-ui:
   enabled: true
@@ -16,8 +20,9 @@ kafka-ui:
       KAFKA_CLUSTERS_0_NAME: local
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: valid-page-kafka-controller-headless:9092
 
+# create user bn_jaeger with password from secret {{.Release.Name}}-cassandra
 # cqlsh -u cassandra -p cassandra
-# CREATE USER bn_jaeger WITH PASSWORD 'QEl7QMzqrR' SUPERUSER;
+# CREATE USER bn_jaeger WITH PASSWORD 'password' SUPERUSER;
 jaeger:
   enabled: true
 
@@ -25,9 +30,6 @@ mongodb:
   enabled: true
   architecture: replicaset
   replicaCount: 3
-  auth:
-    usernames[0]: &mongoUser root
-    passwords[0]: &mongoPassword lPAHilIv0S
   image:
     registry: docker.io
     repository: bitnami/mongodb
@@ -40,76 +42,113 @@ minio:
 keycloak:
   enabled: true
 
+redis:
+  enabled: true
+
+grafana:
+  enabled: true
+  admin:
+    password: admin
+    user: admin
+  datasources:
+    secretDefinition:
+      apiVersion: 1
+      datasources:
+        - name: Prometheus
+          type: prometheus
+          access: proxy
+          orgId: 1
+          url: http://prometheus.arch.homework/
+          version: 1
+          editable: true
+          isDefault: true
+
+prometheus:
+  enabled: true
+  server:
+    extraScrapeConfigs:
+      - job_name: page-consumer
+        metrics_path: /metrics
+        static_configs:
+          - targets:
+              - valid-page-valid-page-consumer-service:8002
+            labels:
+              app: page-valid-page-consumer
+      - job_name: screenshot-requests
+        metrics_path: /metrics
+        static_configs:
+          - targets:
+              - valid-page-valid-page-screenshot-requests-service:8000
+            labels:
+              app: valid-page-screenshot-requests
+      - job_name: page-capture
+        metrics_path: /metrics
+        static_configs:
+          - targets:
+              - valid-page-valid-page-page-capture-service:8003
+            labels:
+              app: page-valid-page-capture
+      - job_name: screenshot-meta
+        metrics_path: /metrics
+        static_configs:
+          - targets:
+              - valid-page-valid-page-screenshot-meta-service:8004
+            labels:
+              app: page-valid-screenshot-meta
+      - job_name: notifications
+        metrics_path: /metrics
+        static_configs:
+          - targets:
+              - valid-page-valid-page-notifications-service:8001
+            labels:
+              app: page-valid-page-notifications
+
+
 
 screenshotRequestsService:
   image: maks113/valid-page-screenshot-requests-service
+  tag: 1.0.5
   serviceId: screenshot-requests
-  mongoUser: *mongoUser
-  mongoPassword: *mongoPassword
+  kafkaBrokers: '{{ .Release.Name }}-kafka:9092'
+  mongoUser: root
+  mongoPasswordSecret: '{{ .Release.Name }}-mongodb'
+  mongoPasswordSecretKey: "mongodb-root-password"
 
 consumerService:
   image: maks113/valid-page-consumer-service
+  tag: 1.0.3
   serviceId: consumer
-  mongoUser: *mongoUser
-  mongoPassword: *mongoPassword
+  kafkaBrokers: '{{ .Release.Name }}-kafka:9092'
+  mongoUser: root
+  mongoPasswordSecret: '{{ .Release.Name }}-mongodb'
+  mongoPasswordSecretKey: "mongodb-root-password"
 
 pageCaptureService:
   image: maks113/valid-page-page-capture-service
+  tag: 1.0.2
+  replicas: 3
   serviceId: page-capture
+  kafkaBrokers: '{{ .Release.Name }}-kafka:9092'
+  minio:
+    bucket: &minioBucket 'screenshots'
+    accessKey: &minioAccessKey 'hwK1qZcHnUsfIh9luKly'
+    secretKey: &minioSecretKey 'kTG09RqbMFVUj9DFjlS8L7ACA2khc5QuOpvDRkMj'
 
 screenshotMetaService:
   image: maks113/valid-screenshot-meta-service
+  tag: 1.0.3
   serviceId: screenshot-meta
-  mongoUser: *mongoUser
-  mongoPassword: *mongoPassword
+  kafkaBrokers: '{{ .Release.Name }}-kafka:9092'
+  mongoUser: root
+  mongoPasswordSecret: '{{ .Release.Name }}-mongodb'
+  mongoPasswordSecretKey: "mongodb-root-password"
   minio:
-    bucket: 'screenshots'
-    accessKey: 'hwK1qZcHnUsfIh9luKly'
-    secretKey: 'kTG09RqbMFVUj9DFjlS8L7ACA2khc5QuOpvDRkMj'
+    bucket: *minioBucket
+    accessKey: *minioAccessKey
+    secretKey: *minioSecretKey
 
 notificationService:
   image: maks113/valid-page-notification-service
+  tag: 1.0.3
   serviceId: notifications
-  mongoUser: *mongoUser
-  mongoPassword: *mongoPassword
-
-#kafka:
-#  image: bitnami/kafka:3.9.0
-#  replicas: 1
-#  volumeSize: 200Mi
-#
-#keycloak:
-#  image: quay.io/keycloak/keycloak:23.0.7
-#  adminUser: admin
-#  adminPassword: admin
-#
-#postgres:
-#  replicas: 1
-#  image: postgres:15
-#  bdName: keycloak
-#  volumeSize: 200Mi
-#  username: keycloak
-#  password: password
-#
-#minio:
-#  replicas: 1
-#  image: minio/minio:latest
-#  volumeSize: 200Mi
-#  rootUser: minioadmin
-#  rootPassword: minioadmin
-#  bucket: screenshots
-#  accessKey: ''
-#  secretKey: ''
-#
-mongo:
-  username: root
-  password: example
-
-#grafana:
-#  adminUser: admin
-#  adminPassword: admin
-#  datasources:
-#    prometheus:
-#      url: 1
-#      access: 2
-#      isDefault: true
+  kafkaBrokers: '{{ .Release.Name }}-kafka:9092'

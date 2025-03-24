@@ -1,0 +1,30 @@
+dependencies:
+- name: kafka
+  repository: https://charts.bitnami.com/bitnami
+  version: 31.5.0
+- name: jaeger
+  repository: https://charts.bitnami.com/bitnami
+  version: 5.1.12
+- name: mongodb
+  repository: https://charts.bitnami.com/bitnami
+  version: 12.1.16
+- name: keycloak
+  repository: https://charts.bitnami.com/bitnami
+  version: 24.4.13
+- name: minio
+  repository: https://charts.bitnami.com/bitnami
+  version: 15.0.7
+- name: grafana
+  repository: https://charts.bitnami.com/bitnami
+  version: 11.6.0
+- name: kafka-ui
+  repository: https://provectus.github.io/kafka-ui-charts
+  version: 0.7.6
+- name: redis
+  repository: https://charts.bitnami.com/bitnami
+  version: 20.11.4
+- name: prometheus
+  repository: https://charts.bitnami.com/bitnami
+  version: 1.4.9
+digest: sha256:b634316864a70157931e7101d0e142b8eecaeeaabee0cac4d38082a2987ebc1b
+generated: "2025-03-24T02:54:42.2532823+03:00"

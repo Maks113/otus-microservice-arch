@@ -1,3 +1,4 @@
+import { PartitionAssigners } from 'kafkajs';
 import otelSDK from './tracing';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';

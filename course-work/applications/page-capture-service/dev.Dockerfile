@@ -1,4 +1,4 @@
-FROM node:22.5.1 as builder
+FROM node:22.5.1 AS builder
 
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 ENV PUPPETEER_EXECUTABLE_PATH="/usr/bin/chromium"

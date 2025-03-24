@@ -1,4 +1,4 @@
-FROM node:22.5.1-alpine3.20 as builder
+FROM node:22.5.1-alpine3.20 AS builder
 
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
@@ -11,7 +11,7 @@ RUN npm i -g pnpm
 RUN pnpm i
 RUN pnpm run build
 
-FROM node:22.5.1-alpine3.20
+FROM node:22.5.1
 
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"

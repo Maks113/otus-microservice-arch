@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
         - name: screenshot-meta
-          image: "maks113/valid-page-screenshot-meta-service:1.0.1"
+          image: "{{ .Values.screenshotMetaService.image }}:{{ .Values.screenshotMetaService.tag }}"
           ports:
             - containerPort: 8004
           env:
@@ -28,13 +28,16 @@ spec:
             - name: MONGO_USER
               value: {{ .Values.screenshotMetaService.mongoUser }}
             - name: MONGO_PASSWORD
-              value: {{ .Values.screenshotMetaService.mongoPassword }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ tpl .Values.screenshotMetaService.mongoPasswordSecret . }}
+                  key: {{ .Values.screenshotMetaService.mongoPasswordSecretKey }}
             - name: MONGO_DB_NAME
-              value: "notifications"
+              value: "screenshot-meta"
 
             # Kafka configuration
             - name: KAFKA_BROKERS_CSV
-              value: "{{ .Release.Name }}-kafka-controller-headless:9092"
+              value: {{ tpl .Values.screenshotMetaService.kafkaBrokers . }}
             - name: KAFKA_GROUP_ID
               value: {{ .Values.screenshotMetaService.serviceId }}
 
@@ -61,6 +64,10 @@ spec:
               value: {{ .Values.notificationService.serviceId }}
             - name: SCREENSHOT_REQUEST_SERVICE_GROUP_ID
               value: {{ .Values.screenshotRequestsService.serviceId }}
+
+            # tracing
+            - name: OTEL_TRACE_COLLECTOR_URL
+              value: 'http://{{ .Release.Name }}-jaeger-collector:4317'
           resources:
             requests:
               memory: "512Mi"

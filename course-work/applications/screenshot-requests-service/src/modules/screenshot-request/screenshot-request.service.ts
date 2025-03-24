@@ -116,10 +116,14 @@ export class ScreenshotRequestService {
     );
   }
 
-  getForUser(userEmail: string): Promise<ScreenshotRequestDocument[]> {
-    return this.screenshotRequestModel
-      .find({ userEmail })
+  async getForUser(userEmail: string): Promise<ScreenshotRequestDocument[]> {
+    return (await this.screenshotRequestModel
+      .find({ 'payload.userEmail': userEmail })
       .sort({ createdAt: -1 })
-      .exec();
+      .exec())
+      .map((r: ScreenshotRequestDocument): ScreenshotRequestDocument => {
+        if (r?.payload?.traceCarrier) r.payload.traceCarrier = null;
+        return r
+      });
   }
 }

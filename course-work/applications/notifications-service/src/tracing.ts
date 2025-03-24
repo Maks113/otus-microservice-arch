@@ -18,7 +18,7 @@ import { ClientRequest } from 'node:http';
 import * as process from 'process';
 
 const collectorOptions = {
-  url: 'http://jaeger:4317',
+  url: process.env.OTEL_TRACE_COLLECTOR_URL ?? '',
 };
 const traceExporter = new OTLPTraceExporter(collectorOptions);
 const logExporter = new OTLPLogExporter(collectorOptions);

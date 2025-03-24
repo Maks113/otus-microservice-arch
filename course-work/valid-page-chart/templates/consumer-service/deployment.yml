@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "fullname" . }}-consumer-service
+  name: {{ include "fullname" . }}-consumer
 spec:
   selector:
     matchLabels:
-      app: consumer-service
+      app: consumer
   template:
     metadata:
       labels:
-        app: consumer-service
+        app: consumer
     spec:
       containers:
-        - name: consumer-service
-          image: "maks113/valid-page-consumer-service:1.0.1"
+        - name: consumer
+          image: "{{ .Values.consumerService.image }}:{{ .Values.consumerService.tag }}"
           ports:
             - containerPort: 8002
           env:
@@ -26,13 +26,16 @@ spec:
             - name: MONGO_USER
               value: {{ .Values.consumerService.mongoUser }}
             - name: MONGO_PASSWORD
-              value: {{ .Values.consumerService.mongoPassword }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ tpl .Values.consumerService.mongoPasswordSecret . }}
+                  key: {{ .Values.consumerService.mongoPasswordSecretKey }}
             - name: MONGO_DB_NAME
               value: "consumers"
 
             # Kafka configuration
             - name: KAFKA_BROKERS_CSV
-              value: "{{ .Release.Name }}-kafka-controller-headless:9092"
+              value: {{ tpl .Values.consumerService.kafkaBrokers . }}
             - name: KAFKA_GROUP_ID
               value: {{ .Values.consumerService.serviceId }}
 
@@ -47,6 +50,10 @@ spec:
               value: {{ .Values.notificationService.serviceId }}
             - name: SCREENSHOT_REQUEST_SERVICE_GROUP_ID
               value: {{ .Values.screenshotRequestsService.serviceId }}
+
+            # tracing
+            - name: OTEL_TRACE_COLLECTOR_URL
+              value: 'http://{{ .Release.Name }}-jaeger-collector:4317'
           resources:
             requests:
               memory: "512Mi"
