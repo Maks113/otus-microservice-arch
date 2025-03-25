@@ -157,11 +157,53 @@ Availability + Partition tolerance
 ### Используемые паттерны
 - Кеширование
 
-
 # Проблемы
 Не давать делать скриншоты слишком часто
 
 Верифицировать на момент последнего события  
+
+# Установка
+```sh
+# Запустить minikube
+minikube start
+# Установить nginx-ingress ./nginx
+
+# Создать неймспейс и установить туда приложение
+kubectl create namespace app
+helm install -n app valid-page .
+
+# Обновить пароль в cassnadra для пользователя bn_jaeger из секрета {{.Release.Name}}-cassandra
+cqlsh -u cassandra -p cassandra
+LIST USERS;
+CREATE USER bn_jaeger WITH PASSWORD 'password' SUPERUSER;
+
+# Настроить realm в keycloack
+realm: valid-page
+client: valid-page
+client-scope с mapper Audience
+Добавить созданный scope в client как deafult
+Включить client authentication
+Скопировать с вкладки credentials - secret
+Скопировать серкреты в postman
+# Добавить bucket и access key в minio
+
+# Увеличить количество partitions в топиках kafka для реплицированных сервисов
+
+# Добавить в графану дашборд
+11159
+```
+
+# Ссылки
+```
+http://minio.arch.homework/
+http://kafka-ui.arch.homework/
+http://keycloak.arch.homework/
+http://grafana.arch.homework/
+http://jaeger.arch.homework/
+http://prometheus.arch.homework/
+http://arch.homework/
+```
+
 
 # Развитие
 Вынести сервис валидации и использовать соответствующее хранилище

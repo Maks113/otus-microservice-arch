@@ -1,8 +1,9 @@
+Миникубик запускать с драйвером hyper-v
 Использовать nginx ingress контроллер, установленный через хелм, а не встроенный в миникубик:
 ```
 kubectl create namespace m \
  && helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx/ \
- && helm repo update \ 
+ && helm repo update \
  && helm install nginx ingress-nginx/ingress-nginx --namespace m -f nginx-ingress.yaml
 ```
 
@@ -15,8 +16,8 @@ https://kubernetes.github.io/ingress-nginx/user-guide/basic-usage/
 прикладывать кроме команд разворачивания приложения, команду удаления)
 
 
-прописать у себя в `hosts` хост `arch.homework` 127.0.0.1 ~~с адресом своего миникубика (`minikube ip`)~~, 
-~~чтобы обращение было по имени хоста в запросах, а не айпи~~ 
+прописать у себя в `hosts` хост `arch.homework` с адресом своего миникубика (`minikube ip`)~~, 
+чтобы обращение было по имени хоста в запросах, а не айпи 
 
 
 ```title=hosts
@@ -25,5 +26,6 @@ https://kubernetes.github.io/ingress-nginx/user-guide/basic-usage/
 127.0.0.1 keycloak.arch.homework
 127.0.0.1 grafana.arch.homework
 127.0.0.1 jaeger.arch.homework
+127.0.0.1 prometheus.arch.homework
 127.0.0.1 arch.homework
 ```

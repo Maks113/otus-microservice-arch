@@ -14,4 +14,4 @@ spec:
               service:
                 name: {{ .Release.Name }}-prometheus-server
                 port:
-                  number: 80
+                  number: 9099

@@ -10,6 +10,7 @@ import { SCREENSHOT_REQUEST_SERVICE } from './domains/services/constants';
 import { ClassValidatorPlugin } from './plugins/class-validator.plugin';
 import { LoggerPlugin } from './plugins/logger.plugin';
 import { SwaggerPlugin } from './plugins/swagger.plugin';
+import { json, urlencoded } from 'express';
 
 async function bootstrap() {
   otelSDK.start();
@@ -20,6 +21,10 @@ async function bootstrap() {
   const configService = configContext.get(ConfigService);
 
   const app = await NestFactory.create(AppModule);
+
+  app.use(json({ limit: '50mb' }));
+  app.use(urlencoded({ extended: true, limit: '50mb' }));
+
   const logger = app.get(Logger);
 
   [

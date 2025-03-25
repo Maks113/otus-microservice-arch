@@ -1,4 +1,5 @@
 import otelSDK from './tracing';
+import { json, urlencoded } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
@@ -11,7 +12,7 @@ import { LoggerPlugin } from './plugins/logger.plugin';
 import { SwaggerPlugin } from './plugins/swagger.plugin';
 
 async function bootstrap() {
-  otelSDK.start();
+  // otelSDK.start();
 
   const configContext = await NestFactory.createApplicationContext(
     ConfigurationModule,
@@ -19,6 +20,10 @@ async function bootstrap() {
   const configService = configContext.get(ConfigService);
 
   const app = await NestFactory.create(AppModule);
+  app.use(json({ limit: '50mb' }));
+  app.use(urlencoded({ extended: true, limit: '50mb' }));
+
+
   const logger = app.get(Logger);
 
   [

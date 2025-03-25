@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
+import { trace } from '@opentelemetry/api';
 import { Connection, Model } from 'mongoose';
 import { PinoLogger } from 'nestjs-pino';
 import { TraceCarrier } from '../../common/TraceCarrier';
@@ -11,56 +12,74 @@ import { PageCaptureCreateEvent } from '../../domains/page-capture/events/PageCa
 import { PageCaptureDeleteEvent } from '../../domains/page-capture/events/PageCaptureDeleteEvent';
 import { ScreenshotMetaCreateEvent } from '../../domains/screenshot-meta/events/ScreenshotMetaCreateEvent';
 import { RequestCreateDto } from './dto/requestCreateDto';
-import { ScreenshotRequest, ScreenshotRequestDocument } from './schemas/screenshot-request';
+import {
+  ScreenshotRequest,
+  ScreenshotRequestDocument,
+} from './schemas/screenshot-request';
 
 @Injectable()
 export class ScreenshotRequestService {
+  tracer = trace.getTracer(ScreenshotRequestService.name);
+
   constructor(
     @InjectConnection() private readonly connection: Connection,
-    @InjectModel(ScreenshotRequest.name) private screenshotRequestModel: Model<ScreenshotRequest>,
+    @InjectModel(ScreenshotRequest.name)
+    private screenshotRequestModel: Model<ScreenshotRequest>,
     private readonly outboxService: OutboxService,
     private readonly logger: PinoLogger,
   ) {
     this.logger.setContext(ScreenshotRequestService.name);
   }
 
-  async createRequest(requestDto: RequestCreateDto): Promise<ScreenshotRequestDocument | undefined> {
+  async createRequest(
+    requestDto: RequestCreateDto,
+  ): Promise<ScreenshotRequestDocument | undefined> {
     const session = await this.connection.startSession();
     session.startTransaction();
     try {
-      const request = await this.screenshotRequestModel.create([{
-        currentStep: 0,
-        errors: [],
-        status: 'pending',
-        payload: {
-          link: requestDto.link,
-          userEmail: requestDto.userEmail,
-        },
-        metadataId: null,
-        imageName: null,
-      }], { session });
+      const request = await this.screenshotRequestModel.create(
+        [
+          {
+            currentStep: 0,
+            errors: [],
+            status: 'pending',
+            payload: {
+              link: requestDto.link,
+              userEmail: requestDto.userEmail,
+            },
+            metadataId: null,
+            imageName: null,
+          },
+        ],
+        { session },
+      );
 
       await session.commitTransaction();
       this.logger.info({
         msg: 'request created',
         request,
-      })
+      });
       return request[0];
     } catch (e) {
       await session.abortTransaction();
-      this.logger.error(e)
+      this.logger.error(e);
       throw e;
-    }
-    finally {
+    } finally {
       await session.endSession();
     }
   }
 
   async failRequest(request: ScreenshotRequestDocument): Promise<void> {
-    await this.screenshotRequestModel.findByIdAndUpdate(request._id, { $set: { status: 'failed' } });
+    await this.screenshotRequestModel.findByIdAndUpdate(request._id, {
+      $set: { status: 'failed' },
+    });
   }
 
-  async keepUserRequest(request: ScreenshotRequestDocument, payload, traceCarrier?: TraceCarrier): Promise<void> {
+  async keepUserRequest(
+    request: ScreenshotRequestDocument,
+    payload,
+    traceCarrier?: TraceCarrier,
+  ): Promise<void> {
     await this.outboxService.emit(
       'consumer.keep',
       JSON.stringify(new ConsumerKeepEvent(request.id, payload.userEmail)),
@@ -68,7 +87,11 @@ export class ScreenshotRequestService {
     );
   }
 
-  async releaseUserRequest(request: ScreenshotRequestDocument, payload, traceCarrier?: TraceCarrier): Promise<void> {
+  async releaseUserRequest(
+    request: ScreenshotRequestDocument,
+    payload,
+    traceCarrier?: TraceCarrier,
+  ): Promise<void> {
     await this.outboxService.emit(
       'consumer.release',
       JSON.stringify(new ConsumerReleaseEvent(request.id, payload.userEmail)),
@@ -76,7 +99,11 @@ export class ScreenshotRequestService {
     );
   }
 
-  async takePageCapture(request: ScreenshotRequestDocument, payload, traceCarrier?: TraceCarrier): Promise<void> {
+  async takePageCapture(
+    request: ScreenshotRequestDocument,
+    payload,
+    traceCarrier?: TraceCarrier,
+  ): Promise<void> {
     await this.outboxService.emit(
       'page-capture.create',
       JSON.stringify(new PageCaptureCreateEvent(request.id, payload.link)),
@@ -84,7 +111,11 @@ export class ScreenshotRequestService {
     );
   }
 
-  async deletePageCapture(request: ScreenshotRequestDocument, payload, traceCarrier?: TraceCarrier): Promise<void> {
+  async deletePageCapture(
+    request: ScreenshotRequestDocument,
+    payload,
+    traceCarrier?: TraceCarrier,
+  ): Promise<void> {
     await this.outboxService.emit(
       'page-capture.delete',
       JSON.stringify(new PageCaptureDeleteEvent(request.id, payload.imageName)),
@@ -92,38 +123,76 @@ export class ScreenshotRequestService {
     );
   }
 
-  async addScreenshotMeta(request: ScreenshotRequestDocument, payload, traceCarrier?: TraceCarrier): Promise<void> {
+  async addScreenshotMeta(
+    request: ScreenshotRequestDocument,
+    payload,
+    traceCarrier?: TraceCarrier,
+  ): Promise<void> {
     await this.outboxService.emit(
       'screenshot-meta.create',
-      JSON.stringify(new ScreenshotMetaCreateEvent(request.id, payload.link, payload.hash ,payload.imageName)),
+      JSON.stringify(
+        new ScreenshotMetaCreateEvent(
+          request.id,
+          payload.link,
+          payload.hash,
+          payload.imageName,
+        ),
+      ),
       traceCarrier,
     );
   }
 
-  async sendSuccessNotification(request: ScreenshotRequestDocument, payload, traceCarrier?: TraceCarrier): Promise<void> {
+  async sendSuccessNotification(
+    request: ScreenshotRequestDocument,
+    payload,
+    traceCarrier?: TraceCarrier,
+  ): Promise<void> {
     await this.outboxService.emit(
       'notification.send',
-      JSON.stringify(new NotificationEvent(request.id, payload.email, `Screenshot is ready: http://localhost/${request.id}`, '')),
+      JSON.stringify(
+        new NotificationEvent(
+          request.id,
+          payload.email,
+          `Screenshot is ready: http://localhost/${request.id}`,
+          '',
+        ),
+      ),
       traceCarrier,
     );
   }
 
-  async sendFailNotification(request: ScreenshotRequestDocument, payload, traceCarrier?: TraceCarrier): Promise<void> {
+  async sendFailNotification(
+    request: ScreenshotRequestDocument,
+    payload,
+    traceCarrier?: TraceCarrier,
+  ): Promise<void> {
     await this.outboxService.emit(
       'notification.send',
-      JSON.stringify(new NotificationEvent(request.id, payload.email, `Error while creating screenshot: ${request?.errors?.join('')}`, '')),
+      JSON.stringify(
+        new NotificationEvent(
+          request.id,
+          payload.email,
+          `Error while creating screenshot: ${request?.errors?.join('')}`,
+          '',
+        ),
+      ),
       traceCarrier,
     );
   }
 
   async getForUser(userEmail: string): Promise<ScreenshotRequestDocument[]> {
-    return (await this.screenshotRequestModel
-      .find({ 'payload.userEmail': userEmail })
-      .sort({ createdAt: -1 })
-      .exec())
-      .map((r: ScreenshotRequestDocument): ScreenshotRequestDocument => {
-        if (r?.payload?.traceCarrier) r.payload.traceCarrier = null;
-        return r
-      });
+    const attributes = {
+      'app.userEmail': userEmail,
+    }
+    this.logger.info({})
+    return await this.tracer.startActiveSpan('Request user requests from mongo', { attributes }, async (span) => {
+      const resp = await this.screenshotRequestModel
+        .find({ 'payload.userEmail': userEmail }, { 'payload.traceCarrier': 0 })
+        .sort({ createdAt: -1 })
+        .exec();
+      span.addEvent('results count', { count: resp.length });
+      span.end();
+      return resp;
+    })
   }
 }

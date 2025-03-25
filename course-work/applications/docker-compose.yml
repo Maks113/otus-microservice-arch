@@ -206,15 +206,17 @@ services:
     volumes:
       - mongo-volume:/data/db
       - mongo-conf-volume:/data/configdb
-      - ./configs:/data/keys
+      - ./configs:/data/keys:400
     ports:
       - '27017:27017'
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
+      # mongo "mongodb://root:example@localhost:27017/"
       # mongo "mongodb://root:example@localhost:27017/?replicaSet=rs0"
       # openssl rand -base64 756 > mongo.key
       # rs.initiate({_id:'rs0',members:[{_id:0,host:'mongo:27017',priority:1}]});
+#    entrypoint: sleep infinity
     command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27017", "--keyFile", "/data/keys/mongo.key"]
 
   kafka:

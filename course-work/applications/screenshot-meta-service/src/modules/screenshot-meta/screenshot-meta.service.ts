@@ -3,10 +3,13 @@ import { InjectModel } from '@nestjs/mongoose';
 import { DeleteResult, Model } from 'mongoose';
 import { PinoLogger } from 'nestjs-pino';
 import { createHmac } from 'node:crypto';
-import fs from 'node:fs';
 import { ScreenshotMetaCreateEvent } from './dto/ScreenshotMetaCreateEvent';
 import { ScreenshotMetaDeleteEvent } from './dto/ScreenshotMetaDeleteEvent';
-import { ScreenshotMeta, ScreenshotMetaDocument } from './schemas/screenshot-meta';
+import {
+  ScreenshotMeta,
+  ScreenshotMetaDocument,
+} from './schemas/screenshot-meta';
+import { Readable } from 'node:stream';
 
 @Injectable()
 export class ScreenshotMetaService {
@@ -61,10 +64,10 @@ export class ScreenshotMetaService {
     }
   }
 
-  async createHmacStream(filePath: string, algorithm = 'sha256'): Promise<string> {
+  async createHmacStream(fileBuffer: Buffer, algorithm = 'sha256'): Promise<string> {
     return new Promise((resolve, reject) => {
       const hmac = createHmac(algorithm, '');
-      const stream = fs.createReadStream(filePath);
+      const stream = Readable.from(fileBuffer);
 
       stream.on('error', (error) => reject(new Error(`File read error: ${error.message}`)));
       stream.on('data', (chunk) => hmac.update(chunk));

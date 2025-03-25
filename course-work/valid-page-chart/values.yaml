@@ -20,9 +20,6 @@ kafka-ui:
       KAFKA_CLUSTERS_0_NAME: local
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: valid-page-kafka-controller-headless:9092
 
-# create user bn_jaeger with password from secret {{.Release.Name}}-cassandra
-# cqlsh -u cassandra -p cassandra
-# CREATE USER bn_jaeger WITH PASSWORD 'password' SUPERUSER;
 jaeger:
   enabled: true
 
@@ -34,13 +31,15 @@ mongodb:
     registry: docker.io
     repository: bitnami/mongodb
     tag: 4.4.15
-    digest: ""
 
 minio:
   enabled: true
 
 keycloak:
   enabled: true
+  postgresql:
+    image:
+      debug: true
 
 redis:
   enabled: true
@@ -66,6 +65,10 @@ grafana:
 prometheus:
   enabled: true
   server:
+    service:
+      type: ClusterIP
+      ports:
+        http: 9099
     extraScrapeConfigs:
       - job_name: page-consumer
         metrics_path: /metrics
@@ -107,9 +110,9 @@ prometheus:
 
 screenshotRequestsService:
   image: maks113/valid-page-screenshot-requests-service
-  tag: 1.0.5
+  tag: 1.0.7
   serviceId: screenshot-requests
-  kafkaBrokers: '{{ .Release.Name }}-kafka:9092'
+  kafkaBrokers: '{{ .Release.Name }}-kafka-controller-headless:9092'
   mongoUser: root
   mongoPasswordSecret: '{{ .Release.Name }}-mongodb'
   mongoPasswordSecretKey: "mongodb-root-password"
@@ -118,7 +121,7 @@ consumerService:
   image: maks113/valid-page-consumer-service
   tag: 1.0.3
   serviceId: consumer
-  kafkaBrokers: '{{ .Release.Name }}-kafka:9092'
+  kafkaBrokers: '{{ .Release.Name }}-kafka-controller-headless:9092'
   mongoUser: root
   mongoPasswordSecret: '{{ .Release.Name }}-mongodb'
   mongoPasswordSecretKey: "mongodb-root-password"
@@ -128,17 +131,17 @@ pageCaptureService:
   tag: 1.0.2
   replicas: 3
   serviceId: page-capture
-  kafkaBrokers: '{{ .Release.Name }}-kafka:9092'
+  kafkaBrokers: '{{ .Release.Name }}-kafka-controller-headless:9092'
   minio:
     bucket: &minioBucket 'screenshots'
-    accessKey: &minioAccessKey 'hwK1qZcHnUsfIh9luKly'
-    secretKey: &minioSecretKey 'kTG09RqbMFVUj9DFjlS8L7ACA2khc5QuOpvDRkMj'
+    accessKey: &minioAccessKey 'ZmV5cm7HYloHbRfhdV6u'
+    secretKey: &minioSecretKey 'WmZsvWKVJfKqPoViYWO4rjUUgLSEkjEcKizU50ix'
 
 screenshotMetaService:
   image: maks113/valid-screenshot-meta-service
-  tag: 1.0.3
+  tag: 1.0.12
   serviceId: screenshot-meta
-  kafkaBrokers: '{{ .Release.Name }}-kafka:9092'
+  kafkaBrokers: '{{ .Release.Name }}-kafka-controller-headless:9092'
   mongoUser: root
   mongoPasswordSecret: '{{ .Release.Name }}-mongodb'
   mongoPasswordSecretKey: "mongodb-root-password"
@@ -151,4 +154,4 @@ notificationService:
   image: maks113/valid-page-notification-service
   tag: 1.0.3
   serviceId: notifications
-  kafkaBrokers: '{{ .Release.Name }}-kafka:9092'
+  kafkaBrokers: '{{ .Release.Name }}-kafka-controller-headless:9092'
