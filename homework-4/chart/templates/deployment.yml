@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-arch-homework
+  labels:
+    app: {{ .Release.Name }}-arch-homework
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-arch-homework
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-arch-homework
+    spec:
+      containers:
+        - name: arch-homework
+          image: "{{ .Values.app.image }}:{{ .Values.app.tag }}"
+          envFrom:
+            - configMapRef:
+                name: {{ .Release.Name }}-app-config
+          env:
+            - name: MONGO_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ tpl .Values.app.mongo.password.secret.name . }}
+                  key: {{ .Values.app.mongo.password.secret.key }}
+          ports:
+            - containerPort: 8000
+          livenessProbe:
+            httpGet:
+              path: /healthcheck/
+              port: 8000
+          readinessProbe:
+            httpGet:
+              path: /healthcheck/
+              port: 8000

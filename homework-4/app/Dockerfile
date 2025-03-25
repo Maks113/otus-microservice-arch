@@ -1,4 +1,4 @@
-FROM node:22.5.1-alpine3.20 as builder
+FROM node:22.5.1-alpine3.20 AS builder
 
 WORKDIR /app
 
@@ -17,4 +17,4 @@ COPY --from=builder /app/package-lock.json ./
 
 RUN npm i --omit=dev
 
-ENTRYPOINT ["npm", "run", "start"]
+ENTRYPOINT ["node", "dist/main"]
