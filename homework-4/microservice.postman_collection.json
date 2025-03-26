@@ -8,12 +8,29 @@
 	"item": [
 		{
 			"name": "create",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let users = pm.collectionVariables.get('users') ?? [];\r",
+							"if (!Array.isArray(users)) users = [];\r",
+							"users.push(pm.response.json()._id);\r",
+							"pm.collectionVariables.set('users', users, Array)\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
 			"request": {
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"username\": \"johndoe589\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"email\": \"bestjohn@doe.com\",\n  \"phone\": \"+71002003040\"\n}",
+					"raw": "{\n  \"username\": \"{{$randomUserName}}\",\n  \"firstName\": \"{{$randomFirstName}}\",\n  \"lastName\": \"{{$randomLastName}}\",\n  \"email\": \"{{$randomEmail}}\",\n  \"phone\": \"{{$randomPhoneNumber}}\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -51,6 +68,24 @@
 		},
 		{
 			"name": "get by id",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"let users = pm.collectionVariables.get('users') ?? [];\r",
+							"if (!Array.isArray(users)) users = [];\r",
+							"\r",
+							"const selectedUser = users[Math.floor(Math.random()*users.length)];\r",
+							"\r",
+							"\r",
+							"pm.request.url.variables.idx(0).value = selectedUser;"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
 			"request": {
 				"method": "GET",
 				"header": [],
@@ -66,7 +101,7 @@
 					"variable": [
 						{
 							"key": "id",
-							"value": "67e2d113d056cb79432f540d"
+							"value": "{{$selectedUser}}"
 						}
 					]
 				}
@@ -75,12 +110,30 @@
 		},
 		{
 			"name": "update",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"let users = pm.collectionVariables.get('users') ?? [];\r",
+							"if (!Array.isArray(users)) users = [];\r",
+							"\r",
+							"const selectedUser = users[Math.floor(Math.random()*users.length)];\r",
+							"\r",
+							"\r",
+							"pm.request.url.variables.idx(0).value = selectedUser;"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
 			"request": {
 				"method": "PUT",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"firstName\": \"John111\",\n  \"lastName\": \"Doe111\",\n  \"email\": \"bestjohn@doe111.com\",\n  \"phone\": \"+7100200304011111\"\n}",
+					"raw": "{\n  \"firstName\": \"{{$randomFirstName}}\",\n  \"lastName\": \"{{$randomLastName}}\",\n  \"email\": \"{{$randomEmail}}\",\n  \"phone\": \"{{$randomPhoneNumber}}\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -108,6 +161,48 @@
 		},
 		{
 			"name": "delete",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"let users = pm.collectionVariables.get('users') ?? [];\r",
+							"if (!Array.isArray(users)) users = [];\r",
+							"\r",
+							"const selectedUser = users[Math.floor(Math.random()*users.length)];\r",
+							"pm.request.url.variables.idx(0).value = selectedUser;\r",
+							"\r",
+							"\r",
+							"let deleted = pm.collectionVariables.get('deletedUsers') ?? [];\r",
+							"if (!Array.isArray(deleted)) deleted = [];\r",
+							"deleted.push(selectedUser);\r",
+							"pm.collectionVariables.set('deletedUsers', deleted, Array)\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let users = pm.collectionVariables.get('users') ?? [];\r",
+							"let deleted = pm.collectionVariables.get('deletedUsers') ?? [];\r",
+							"if (!Array.isArray(users)) users = [];\r",
+							"if (!Array.isArray(deleted)) deleted = [];\r",
+							"\r",
+							"const newUsers = users.filter((user) => !deleted.includes(user));\r",
+							"\r",
+							"pm.collectionVariables.set('users', newUsers, Array)\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
 			"request": {
 				"method": "DELETE",
 				"header": [],
@@ -156,6 +251,14 @@
 			"key": "BaseUrl",
 			"value": "http://arch.homework",
 			"type": "string"
+		},
+		{
+			"key": "users",
+			"value": ""
+		},
+		{
+			"key": "deletedUsers",
+			"value": ""
 		}
 	]
 }

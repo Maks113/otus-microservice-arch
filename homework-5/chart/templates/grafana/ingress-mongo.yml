@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-mongodb-metrics-ingress
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: mongo-metrics.arch.homework
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}-mongodb-metrics
+                port:
+                  number: 9216

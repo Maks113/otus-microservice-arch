@@ -1,4 +1,6 @@
 import { Module } from '@nestjs/common';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { MetricsInterceptor } from '../../middleware/metrics.interceptor';
 import { ConfigurationModule } from '../configuration/configuration.module';
 import { HealthcheckModule } from '../healthcheck/healthcheck.module';
 import { MetricsModule } from '../metrics/metrics.module';
@@ -12,10 +14,15 @@ import { UsersModule } from '../users/users.module';
     PinoLoggerModule,
     MetricsModule,
     MongoModule,
+    HealthcheckModule,
 
     UsersModule,
-    HealthcheckModule,
   ],
-  exports: [],
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: MetricsInterceptor,
+    },
+  ],
 })
 export class AppModule {}

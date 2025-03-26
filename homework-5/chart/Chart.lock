@@ -1,0 +1,12 @@
+dependencies:
+- name: mongodb
+  repository: https://charts.bitnami.com/bitnami
+  version: 12.1.16
+- name: prometheus
+  repository: https://charts.bitnami.com/bitnami
+  version: 1.4.9
+- name: grafana
+  repository: https://charts.bitnami.com/bitnami
+  version: 11.6.0
+digest: sha256:f9c477a4b902ca3ae8eeccd900c80b903e4078411345d4b130a3bcdee4b38e29
+generated: "2025-03-26T21:17:14.218119+03:00"

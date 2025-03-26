@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-prometheus-ingress
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: prometheus.arch.homework
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}-prometheus-server
+                port:
+                  number: 9099

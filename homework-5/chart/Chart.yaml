@@ -1,0 +1,16 @@
+apiVersion: v2
+name: homework-4
+description: A Helm chart
+version: 1.0.0
+appVersion: "1.0"
+
+dependencies:
+  - name: mongodb
+    version: "12.1.16"
+    repository: https://charts.bitnami.com/bitnami
+  - name: prometheus
+    version: "1.4.9"
+    repository: https://charts.bitnami.com/bitnami
+  - name: grafana
+    version: "11.6.0"
+    repository: https://charts.bitnami.com/bitnami
