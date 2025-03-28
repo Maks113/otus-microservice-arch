@@ -1,0 +1,35 @@
+version: "3.9"
+services:
+  app:
+    platform: 'linux/amd64'
+    build:
+      context: ./
+      dockerfile: dev.Dockerfile
+    volumes:
+      - ./:/app
+    environment:
+      PORT: 8000
+      MONGO_HOST: mongo
+      MONGO_PORT: 27017
+      MONGO_USER: root
+      MONGO_PASSWORD: example
+    ports:
+      - "8000:8000"
+    #    entrypoint: sleep infinity
+
+  mongo:
+    platform: 'linux/amd64'
+    image: mongo:4.4.16
+    volumes:
+      - mongo-volume:/data/db
+    ports:
+      - '27017:27017'
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+
+volumes:
+  mongo-volume:
+
+
+
