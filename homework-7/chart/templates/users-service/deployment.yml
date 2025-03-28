@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-arch-homework-users
+  labels:
+    app: {{ .Release.Name }}-arch-homework-users
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-arch-homework-users
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-arch-homework-users
+    spec:
+      containers:
+        - name: users
+          image: "{{ .Values.users.image }}:{{ .Values.users.tag }}"
+          envFrom:
+            - configMapRef:
+                name: {{ .Release.Name }}-app-config
+          env:
+            - name: PORT
+              value: "{{ .Values.users.port }}"
+            - name: MONGO_DB_NAME
+              value: "{{ .Values.users.mongo.db }}"
+            - name: MONGO_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ tpl .Values.mongo.password.secret.name . }}
+                  key: {{ .Values.mongo.password.secret.key }}
+          ports:
+            - containerPort: {{ .Values.users.port }}
+          livenessProbe:
+            httpGet:
+              path: /healthcheck/
+              port: {{ .Values.users.port }}
+          readinessProbe:
+            httpGet:
+              path: /healthcheck/
+              port: {{ .Values.users.port }}

@@ -26,7 +26,7 @@ export class NotificationsController {
 
   @Get('')
   async readList(): Promise<NotificationDocument[]> {
-    const notifications: NotificationDocument[] = await this.notificationModel.find().exec();
+    const notifications: NotificationDocument[] = await this.notificationModel.find().sort({ timestamp: -1 }).exec();
     this.logger.info({
       method: 'ReadList',
       count: notifications.length,

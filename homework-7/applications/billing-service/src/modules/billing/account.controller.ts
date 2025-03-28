@@ -5,7 +5,7 @@ import { AccountCreateDto } from './dto/account.create.dto';
 import { AccountUpdateDto } from './dto/account.update.dto';
 import { AccountDocument } from './schemas/account.schema';
 
-@Controller('user')
+@Controller('account')
 export class AccountController {
   constructor(
     private readonly appService: AccountService,
@@ -36,7 +36,7 @@ export class AccountController {
     @Param('userId') userId: string,
     @Body() payload: AccountUpdateDto,
   ): Promise<AccountDocument> {
-    return this.appService.balanceChange(userId, -Math.abs(payload.value));
+    return await this.appService.balanceChange(userId, -Math.abs(payload.value));
   }
 
   @Post(':userId/top-up')
@@ -44,6 +44,6 @@ export class AccountController {
     @Param('userId') userId: string,
     @Body() payload: AccountUpdateDto,
   ): Promise<AccountDocument> {
-    return this.appService.balanceChange(userId, Math.abs(payload.value));
+    return await this.appService.balanceChange(userId, Math.abs(payload.value));
   }
 }

@@ -1,0 +1,455 @@
+{
+	"info": {
+		"_postman_id": "0e847324-cdcb-47f8-a7ef-9a599ab4236a",
+		"name": "hw-7",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12400630"
+	},
+	"item": [
+		{
+			"name": "create user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('user created', () => {\r",
+							"    pm.response.to.have.status(201);\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"user-1\",\r\n    \"firstName\": \"Name\",\r\n    \"lastName\": \"Fam\",\r\n    \"email\": \"a@a.ru\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://users.{{BaseUrl}}/user",
+					"protocol": "http",
+					"host": [
+						"users",
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add founds and check",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('account must be replenished', () => {\r",
+							"    const body = pm.response.json();\r",
+							"    pm.response.to.have.status(201);\r",
+							"    pm.expect(body.balance).equal(1500)\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"value\": 1500\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://billing.{{BaseUrl}}/account/:userId/top-up",
+					"protocol": "http",
+					"host": [
+						"billing",
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"account",
+						":userId",
+						"top-up"
+					],
+					"variable": [
+						{
+							"key": "userId",
+							"value": "user-1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "order (success)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('order created', () => {\r",
+							"    pm.response.to.have.status(201);\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"userId\": \"user-1\",\r\n    \"orderPrice\": 1000\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://orders.{{BaseUrl}}/order",
+					"protocol": "http",
+					"host": [
+						"orders",
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"order"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "check founds",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('founds changed', () => {\r",
+							"    const body = pm.response.json();\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.expect(body.balance).equal(500)\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://billing.{{BaseUrl}}/account/:userId",
+					"protocol": "http",
+					"host": [
+						"billing",
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"account",
+						":userId"
+					],
+					"variable": [
+						{
+							"key": "userId",
+							"value": "user-1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "check email (success)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('success message', () => {\r",
+							"    const body = pm.response.json();\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.expect(body[0].message).contains('Успешно');\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://notifications.{{BaseUrl}}/",
+					"protocol": "http",
+					"host": [
+						"notifications",
+						"{{BaseUrl}}"
+					],
+					"path": [
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "order (failed)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('order created', () => {\r",
+							"    pm.response.to.have.status(201);\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"userId\": \"user-1\",\r\n    \"orderPrice\": 1000\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://orders.{{BaseUrl}}/order",
+					"protocol": "http",
+					"host": [
+						"orders",
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"order"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "check founds",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('founds not changed', () => {\r",
+							"    const body = pm.response.json();\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.expect(body.balance).equal(500)\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://billing.{{BaseUrl}}/account/:userId",
+					"protocol": "http",
+					"host": [
+						"billing",
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"account",
+						":userId"
+					],
+					"variable": [
+						{
+							"key": "userId",
+							"value": "user-1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "check email (failed)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('failed message', () => {\r",
+							"    const body = pm.response.json();\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.expect(body[0].message).contains('Ошибка');\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://notifications.{{BaseUrl}}/",
+					"protocol": "http",
+					"host": [
+						"notifications",
+						"{{BaseUrl}}"
+					],
+					"path": [
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{access_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "BaseUrl",
+			"value": "arch.homework",
+			"type": "string"
+		},
+		{
+			"key": "users",
+			"value": ""
+		},
+		{
+			"key": "deletedUsers",
+			"value": ""
+		},
+		{
+			"key": "keycloackServer",
+			"value": "http://keycloak.arch.homework",
+			"type": "default"
+		},
+		{
+			"key": "keycloackRealm",
+			"value": "hw6",
+			"type": "default"
+		},
+		{
+			"key": "keycloackClient",
+			"value": "hw6",
+			"type": "default"
+		},
+		{
+			"key": "keycloackSecret",
+			"value": "u6iHIt8DZS6msnJXthy292OWQGZuXMpC",
+			"type": "default"
+		}
+	]
+}

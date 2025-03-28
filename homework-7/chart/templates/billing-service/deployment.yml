@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-arch-homework-billing
+  labels:
+    app: {{ .Release.Name }}-arch-homework-billing
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-arch-homework-billing
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-arch-homework-billing
+    spec:
+      containers:
+        - name: billing
+          image: "{{ .Values.billing.image }}:{{ .Values.billing.tag }}"
+          envFrom:
+            - configMapRef:
+                name: {{ .Release.Name }}-app-config
+          env:
+            - name: PORT
+              value: "{{ .Values.billing.port }}"
+            - name: MONGO_DB_NAME
+              value: "{{ .Values.billing.mongo.db }}"
+            - name: MONGO_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ tpl .Values.mongo.password.secret.name . }}
+                  key: {{ .Values.mongo.password.secret.key }}
+            # Kafka configuration
+            - name: KAFKA_BROKERS_CSV
+              value: {{ tpl .Values.kafka.brokers . }}
+          ports:
+            - containerPort: {{ .Values.billing.port }}
+          livenessProbe:
+            httpGet:
+              path: /healthcheck/
+              port: {{ .Values.billing.port }}
+          readinessProbe:
+            httpGet:
+              path: /healthcheck/
+              port: {{ .Values.billing.port }}

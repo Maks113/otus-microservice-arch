@@ -1,0 +1,153 @@
+newman
+
+hw-7
+
+→ create user
+  POST http://users.arch.homework/user  
+  201 Created ★ 47ms time ★ 433B↑ 333B↓ size ★ 10↑ 6↓ headers ★ 0 cookies
+  ┌ ↑ raw ★ 104B
+  │ {
+  │     "username": "user-1",
+  │     "firstName": "Name",
+  │     "lastName": "Fam",
+  │     "email": "a@a.ru"
+  │ }
+  └ 
+  ┌ ↓ application/json ★ text ★ json ★ utf8 ★ 115B
+  │ {"username":"user-1","firstName":"Name","lastName":"Fa
+  │ m","email":"a@a.ru","_id":"67e7353ca04f8e15d82b2936","
+  │ __v":0}
+  └
+  prepare   wait   dns-lookup   tcp-handshake   transfer-start   download   process   total 
+  8ms       5ms    1ms          542µs           35ms             4ms        167µs     54ms  
+
+  √  user created
+
+→ add founds and check
+  POST http://billing.arch.homework/account/user-1/top-up  
+  201 Created ★ 16ms time ★ 370B↑ 292B↓ size ★ 10↑ 6↓ headers ★ 0 cookies
+  ┌ ↑ raw ★ 23B
+  │ {
+  │     "value": 1500
+  │ }
+  └ 
+  ┌ ↓ application/json ★ text ★ json ★ utf8 ★ 75B
+  │ {"_id":"67e7353cdd05ab7f24d5f005","userId":"user-1","b
+  │ alance":1500,"__v":0}
+  └
+  prepare   wait    dns-lookup   tcp-handshake   transfer-start   download   process   total 
+  471µs     349µs   126µs        298µs           14ms             895µs      36µs      16ms  
+
+  √  account must be replenished
+
+→ order (success)
+  POST http://orders.arch.homework/order  
+  201 Created ★ 20ms time ★ 383B↑ 127B↓ size ★ 10↑ 4↓ headers ★ 0 cookies
+  ┌ ↑ raw ★ 53B
+  │ {
+  │     "userId": "user-1",
+  │     "orderPrice": 1000
+  │ }
+  └ 
+  ↓ text/plain ★ text ★ plain ★ utf8
+
+  prepare   wait    dns-lookup   tcp-handshake   transfer-start   download   process   total 
+  399µs     303µs   211µs        289µs           17ms             1ms        78µs      20ms  
+
+  √  order created
+
+→ check founds
+  GET http://billing.arch.homework/account/user-1  
+  200 OK ★ 4ms time ★ 287B↑ 286B↓ size ★ 8↑ 6↓ headers ★ 0 cookies
+  ┌ ↓ application/json ★ text ★ json ★ utf8 ★ 74B
+  │ {"_id":"67e7353cdd05ab7f24d5f005","userId":"user-1","b
+  │ alance":500,"__v":0}
+  └
+  prepare   wait    dns-lookup   tcp-handshake   transfer-start   download   process   total 
+  714µs     465µs   (cache)      (cache)         2ms              430µs      37µs      4ms   
+
+  √  founds changed
+
+→ check email (success)
+  GET http://notifications.arch.homework/  
+  200 OK ★ 14ms time ★ 279B↑ 429B↓ size ★ 8↑ 6↓ headers ★ 0 cookies
+  ┌ ↓ application/json ★ text ★ json ★ utf8 ★ 216B
+  │ [{"_id":"67e7353c1ae3b931e30556b0","to":"user@example.
+  │ com","subject":"Заказ создан","message":"Успешно созда
+  │ н заказ на сумму: 1000","timestamp":"2025-03-28T23:48:
+  │ 12.572Z","__v":0}]
+  └
+  prepare   wait    dns-lookup   tcp-handshake   transfer-start   download   process   total 
+  769µs     416µs   158µs        504µs           11ms             564µs      37µs      14ms  
+
+  √  success message
+
+→ order (failed)
+  POST http://orders.arch.homework/order  
+  201 Created ★ 7ms time ★ 383B↑ 127B↓ size ★ 10↑ 4↓ headers ★ 0 cookies
+  ┌ ↑ raw ★ 53B
+  │ {
+  │     "userId": "user-1",
+  │     "orderPrice": 1000
+  │ }
+  └ 
+  ↓ text/plain ★ text ★ plain ★ utf8
+
+  prepare   wait    dns-lookup   tcp-handshake   transfer-start   download   process   total 
+  408µs     160µs   (cache)      (cache)         5ms              464µs      23µs      6ms   
+
+  √  order created
+
+→ check founds
+  GET http://billing.arch.homework/account/user-1  
+  200 OK ★ 4ms time ★ 287B↑ 286B↓ size ★ 8↑ 6↓ headers ★ 0 cookies
+  ┌ ↓ application/json ★ text ★ json ★ utf8 ★ 74B
+  │ {"_id":"67e7353cdd05ab7f24d5f005","userId":"user-1","b
+  │ alance":500,"__v":0}
+  └
+  prepare   wait    dns-lookup   tcp-handshake   transfer-start   download   process   total 
+  312µs     237µs   (cache)      (cache)         2ms              430µs      24µs      3ms   
+
+  √  founds not changed
+
+→ check email (failed)
+  GET http://notifications.arch.homework/  
+  200 OK ★ 5ms time ★ 279B↑ 714B↓ size ★ 8↑ 6↓ headers ★ 0 cookies
+  ┌ ↓ application/json ★ text ★ json ★ utf8 ★ 500B
+  │ [{"_id":"67e7353c1ae3b931e30556b3","to":"user@example.
+  │ com","subject":"Ошибка создания заказа","message":"Оши
+  │ бка списания по заказу на сумму: 1000. Недостаточно ср
+  │ едств","timestamp":"2025-03-28T23:48:12.869Z","__v":0}
+  │ ,{"_id":"67e7353c1ae3b931e30556b0","to":"user@example.
+  │ com","subject":"Заказ создан","message":"Успешно созда
+  │ н заказ на сумму: 1000","timestamp":"2025-03-28T23:48:
+  │ 12.572Z","__v":0}]
+  └
+  prepare   wait    dns-lookup   tcp-handshake   transfer-start   download   process   total 
+  490µs     163µs   (cache)      (cache)         4ms              397µs      31µs      5ms   
+
+  √  failed message
+
+┌─────────────────────────┬─────────────────────┬────────────────────┐
+│                         │            executed │             failed │
+├─────────────────────────┼─────────────────────┼────────────────────┤
+│              iterations │                   1 │                  0 │
+├─────────────────────────┼─────────────────────┼────────────────────┤
+│                requests │                   8 │                  0 │
+├─────────────────────────┼─────────────────────┼────────────────────┤
+│            test-scripts │                  16 │                  0 │
+├─────────────────────────┼─────────────────────┼────────────────────┤
+│      prerequest-scripts │                   8 │                  0 │
+├─────────────────────────┼─────────────────────┼────────────────────┤
+│              assertions │                   8 │                  0 │
+├─────────────────────────┴─────────────────────┴────────────────────┤
+│ total run duration: 873ms                                          │
+├────────────────────────────────────────────────────────────────────┤
+│ total data received: 1.05kB (approx)                               │
+├────────────────────────────────────────────────────────────────────┤
+│ average response time: 14ms [min: 4ms, max: 47ms, s.d.: 13ms]      │
+├────────────────────────────────────────────────────────────────────┤
+│ average DNS lookup time: 456µs [min: 126µs, max: 1ms, s.d.: 482µs] │
+├────────────────────────────────────────────────────────────────────┤
+│ average first byte time: 11ms [min: 2ms, max: 35ms, s.d.: 10ms]    │
+└────────────────────────────────────────────────────────────────────┘

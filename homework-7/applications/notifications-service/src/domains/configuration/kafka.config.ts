@@ -5,6 +5,4 @@ export default registerAs('kafka', () => ({
     ?.split(',')
     .map(b => b.trim())
     ?? throwError('Environment variable KAFKA_BROKERS_CSV is required'),
-  consumerGroupId: process.env.KAFKA_GROUP_ID
-    ?? throwError('Environment variable KAFKA_GROUP_ID is required'),
 }));

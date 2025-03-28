@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-arch-homework-ingress-notifications
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: "notifications.arch.homework"
+      http:
+        paths:
+          - pathType: Prefix
+            path: /
+            backend:
+              service:
+                name: {{ .Release.Name }}-app-service-notifications
+                port:
+                  number: {{ .Values.notifications.port }}

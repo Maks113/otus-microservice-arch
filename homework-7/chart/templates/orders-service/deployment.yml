@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-arch-homework-orders
+  labels:
+    app: {{ .Release.Name }}-arch-homework-orders
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-arch-homework-orders
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-arch-homework-orders
+    spec:
+      containers:
+        - name: orders
+          image: "{{ .Values.orders.image }}:{{ .Values.orders.tag }}"
+          envFrom:
+            - configMapRef:
+                name: {{ .Release.Name }}-app-config
+          env:
+            - name: PORT
+              value: "{{ .Values.orders.port }}"
+            - name: MONGO_DB_NAME
+              value: "{{ .Values.orders.mongo.db }}"
+            - name: MONGO_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ tpl .Values.mongo.password.secret.name . }}
+                  key: {{ .Values.mongo.password.secret.key }}
+            # Kafka configuration
+            - name: KAFKA_BROKERS_CSV
+              value: {{ tpl .Values.kafka.brokers . }}
+          ports:
+            - containerPort: {{ .Values.orders.port }}
+          livenessProbe:
+            httpGet:
+              path: /healthcheck/
+              port: {{ .Values.orders.port }}
+          readinessProbe:
+            httpGet:
+              path: /healthcheck/
+              port: {{ .Values.orders.port }}

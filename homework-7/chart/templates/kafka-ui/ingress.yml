@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-kafka-ui-ingress
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: kafka-ui.arch.homework
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}-kafka-ui
+                port:
+                  number: 80

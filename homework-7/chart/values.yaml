@@ -7,16 +7,58 @@ mongodb:
     repository: bitnami/mongodb
     tag: 4.4.15
 
-app:
-  image: maks113/microservice-architecture-homework-4
+mongo:
+  hostTpl: "{{ .Release.Name }}-mongodb-headless"
+  port: "27017"
+  user: "root"
+  password:
+    secret:
+      name: "{{ .Release.Name }}-mongodb"
+      key: "mongodb-root-password"
+
+kafka:
+  enabled: true
+  brokers: '{{ .Release.Name }}-kafka-controller-headless:9092'
+  zookeeper:
+    enabled: false
+  listeners:
+    client:
+      protocol: 'PLAINTEXT'
+  kraft:
+    enabled: true
+    clusterId: 'ZgYhN123S8q9r7QwRDqriA' # FIXME generate new
+
+kafka-ui:
+  enabled: true
+  envs:
+    config:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: hw7-kafka-controller-headless:9092
+
+users:
+  image: maks113/microservice-architecture-homework-7-users-service
   tag: 1.0.0
   port: 8000
   mongo:
-    hostTpl: "{{ .Release.Name }}-mongodb-headless"
-    port: "27017"
-    user: "root"
     db: "users"
-    password:
-      secret:
-        name: "{{ .Release.Name }}-mongodb"
-        key: "mongodb-root-password"
+
+notifications:
+  image: maks113/microservice-architecture-homework-7-notifications-service
+  tag: 1.0.0
+  port: 8001
+  mongo:
+    db: "notifications"
+
+orders:
+  image: maks113/microservice-architecture-homework-7-orders-service
+  tag: 1.0.0
+  port: 8002
+  mongo:
+    db: "orders"
+
+billing:
+  image: maks113/microservice-architecture-homework-7-billing-service
+  tag: 1.0.0
+  port: 8003
+  mongo:
+    db: "billing"

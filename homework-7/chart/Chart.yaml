@@ -8,3 +8,9 @@ dependencies:
   - name: mongodb
     version: "12.1.16"
     repository: https://charts.bitnami.com/bitnami
+  - name: kafka
+    version: "31.5.0"
+    repository: https://charts.bitnami.com/bitnami
+  - name: kafka-ui
+    version: "0.7.6"
+    repository:  https://provectus.github.io/kafka-ui-charts

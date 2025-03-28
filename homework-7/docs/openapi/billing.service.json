@@ -1,0 +1,196 @@
+{
+	"openapi": "3.0.0",
+	"paths": {
+		"/metrics": {
+			"get": {
+				"operationId": "PrometheusController_index",
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": ""
+					}
+				},
+				"tags": [
+					"Prometheus"
+				]
+			}
+		},
+		"/healthcheck": {
+			"get": {
+				"operationId": "HealthcheckController_ping",
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": ""
+					}
+				},
+				"tags": [
+					"Healthcheck"
+				]
+			}
+		},
+		"/account/{userId}": {
+			"get": {
+				"operationId": "AccountController_readByUserId",
+				"parameters": [
+					{
+						"name": "userId",
+						"required": true,
+						"in": "path",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": ""
+					}
+				},
+				"tags": [
+					"Account"
+				]
+			}
+		},
+		"/account": {
+			"get": {
+				"operationId": "AccountController_getList",
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": ""
+					}
+				},
+				"tags": [
+					"Account"
+				]
+			},
+			"post": {
+				"operationId": "AccountController_create",
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/AccountCreateDto"
+							}
+						}
+					}
+				},
+				"responses": {
+					"201": {
+						"description": ""
+					}
+				},
+				"tags": [
+					"Account"
+				]
+			}
+		},
+		"/account/{userId}/withdraw": {
+			"post": {
+				"operationId": "AccountController_withdraw",
+				"parameters": [
+					{
+						"name": "userId",
+						"required": true,
+						"in": "path",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/AccountUpdateDto"
+							}
+						}
+					}
+				},
+				"responses": {
+					"201": {
+						"description": ""
+					}
+				},
+				"tags": [
+					"Account"
+				]
+			}
+		},
+		"/account/{userId}/top-up": {
+			"post": {
+				"operationId": "AccountController_topUp",
+				"parameters": [
+					{
+						"name": "userId",
+						"required": true,
+						"in": "path",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/AccountUpdateDto"
+							}
+						}
+					}
+				},
+				"responses": {
+					"201": {
+						"description": ""
+					}
+				},
+				"tags": [
+					"Account"
+				]
+			}
+		}
+	},
+	"info": {
+		"title": "Microservice architecture",
+		"description": "Microservice architecture app API description",
+		"version": "1.0",
+		"contact": {}
+	},
+	"tags": [],
+	"servers": [],
+	"components": {
+		"schemas": {
+			"AccountCreateDto": {
+				"type": "object",
+				"properties": {
+					"userId": {
+						"type": "string"
+					},
+					"initialBalance": {
+						"type": "number"
+					}
+				},
+				"required": [
+					"userId",
+					"initialBalance"
+				]
+			},
+			"AccountUpdateDto": {
+				"type": "object",
+				"properties": {
+					"value": {
+						"type": "number"
+					}
+				},
+				"required": [
+					"value"
+				]
+			}
+		}
+	}
+}

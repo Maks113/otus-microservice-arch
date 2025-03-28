@@ -1,17 +1,17 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ .Release.Name }}-arch-homework-ingress
+  name: {{ .Release.Name }}-arch-homework-ingress-orders
 spec:
   ingressClassName: nginx
   rules:
-    - host: "arch.homework"
+    - host: "orders.arch.homework"
       http:
         paths:
           - pathType: Prefix
             path: /
             backend:
               service:
-                name: {{ .Release.Name }}-app-service
+                name: {{ .Release.Name }}-app-service-orders
                 port:
-                  number: 8000
+                  number: {{ .Values.orders.port }}

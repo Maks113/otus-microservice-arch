@@ -1,11 +1,10 @@
-import { Body, Controller, Delete, Get, Param, Put, Req, Res } from '@nestjs/common';
+import { Body, Controller, Post, Res } from '@nestjs/common';
+import { Response } from 'express';
 import { PinoLogger } from 'nestjs-pino';
-import { Request, Response } from 'express';
-import { OrderUpdateDto } from './dto/order.update.dto';
-import { UserDocument } from './schemas/order.schema';
+import { OrderCreateDto } from './dto/order.create.dto';
 import { OrdersService } from './orders.service';
 
-@Controller('user')
+@Controller('order')
 export class OrdersController {
   constructor(
     private readonly appService: OrdersService,
@@ -14,46 +13,16 @@ export class OrdersController {
     this.logger.setContext(OrdersController.name);
   }
 
-  @Get(':username')
-  async readByUsername(
-    @Req() req: Request,
+  @Post()
+  async orderCreate(
+    @Body() orderCreateDto: OrderCreateDto,
     @Res() res: Response,
-    @Param('username') username: string,
-  ): Promise<UserDocument> {
-    if (username !== (req as any).user.username) {
-      res.status(401).send({ error: 'Unauthorized request' });
-      return;
+  ) {
+    try {
+      await this.appService.create(orderCreateDto);
+      res.status(201).send();
+    } catch (e: unknown) {
+      res.status(400).send();
     }
-
-    res.send(await this.appService.getByUsername(username));
-  }
-
-  @Put(':username')
-  async update(
-    @Req() req: Request,
-    @Res() res: Response,
-    @Param('username') username: string,
-    @Body() body: OrderUpdateDto,
-  ): Promise<UserDocument> {
-    if (username !== (req as any).user.username) {
-      res.status(401).send({ error: 'Unauthorized request' });
-      return;
-    }
-
-    res.send(await this.appService.updateByUsername(username, body));
-  }
-
-  @Delete(':username')
-  async delete(
-    @Req() req: Request,
-    @Res() res: Response,
-    @Param('username') username: string,
-  ): Promise<UserDocument> {
-    if (username !== (req as any).user.username) {
-      res.status(401).send({ error: 'Unauthorized request' });
-      return;
-    }
-
-    res.send(await this.appService.deleteByUsername(username));
   }
 }

@@ -2,5 +2,11 @@ dependencies:
 - name: mongodb
   repository: https://charts.bitnami.com/bitnami
   version: 12.1.16
-digest: sha256:cb95bb536adfde643ae3eb68fe4ecc985ff63ad033b35bda8e17538b51c78b80
-generated: "2025-03-25T17:31:42.0695822+03:00"
+- name: kafka
+  repository: https://charts.bitnami.com/bitnami
+  version: 31.5.0
+- name: kafka-ui
+  repository: https://provectus.github.io/kafka-ui-charts
+  version: 0.7.6
+digest: sha256:1e2414aee290e696f29176c74f4cbb12f1c3b92ff831cf2bd2f22977419403a3
+generated: "2025-03-29T01:00:17.6238971+03:00"

@@ -1,1 +1,206 @@
-
+{
+	"openapi": "3.0.0",
+	"paths": {
+		"/metric": {
+			"get": {
+				"operationId": "PrometheusController_index",
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": ""
+					}
+				},
+				"tags": [
+					"Prometheus"
+				]
+			}
+		},
+		"/user": {
+			"post": {
+				"operationId": "UsersController_create",
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UserCreateDto"
+							}
+						}
+					}
+				},
+				"responses": {
+					"201": {
+						"description": ""
+					}
+				},
+				"tags": [
+					"Users"
+				]
+			},
+			"get": {
+				"operationId": "UsersController_readAll",
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": ""
+					}
+				},
+				"tags": [
+					"Users"
+				]
+			}
+		},
+		"/user/{id}": {
+			"get": {
+				"operationId": "UsersController_readById",
+				"parameters": [
+					{
+						"name": "id",
+						"required": true,
+						"in": "path",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": ""
+					}
+				},
+				"tags": [
+					"Users"
+				]
+			},
+			"put": {
+				"operationId": "UsersController_update",
+				"parameters": [
+					{
+						"name": "id",
+						"required": true,
+						"in": "path",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UserUpdateDto"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": ""
+					}
+				},
+				"tags": [
+					"Users"
+				]
+			},
+			"delete": {
+				"operationId": "UsersController_delete",
+				"parameters": [
+					{
+						"name": "id",
+						"required": true,
+						"in": "path",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": ""
+					}
+				},
+				"tags": [
+					"Users"
+				]
+			}
+		},
+		"/healthcheck": {
+			"get": {
+				"operationId": "HealthcheckController_ping",
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": ""
+					}
+				},
+				"tags": [
+					"Healthcheck"
+				]
+			}
+		}
+	},
+	"info": {
+		"title": "Microservice architecture",
+		"description": "Microservice architecture app API description",
+		"version": "1.0",
+		"contact": {}
+	},
+	"tags": [],
+	"servers": [],
+	"components": {
+		"schemas": {
+			"UserCreateDto": {
+				"type": "object",
+				"properties": {
+					"username": {
+						"type": "string"
+					},
+					"firstName": {
+						"type": "string"
+					},
+					"lastName": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"phone": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"username",
+					"firstName",
+					"lastName",
+					"email",
+					"phone"
+				]
+			},
+			"UserUpdateDto": {
+				"type": "object",
+				"properties": {
+					"firstName": {
+						"type": "string"
+					},
+					"lastName": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"phone": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"firstName",
+					"lastName",
+					"email",
+					"phone"
+				]
+			}
+		}
+	}
+}

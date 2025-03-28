@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-app-service-orders
+spec:
+  type: ClusterIP
+  selector:
+    app: {{ .Release.Name }}-arch-homework-orders
+  ports:
+    - port: {{ .Values.orders.port }}
+      targetPort: {{ .Values.orders.port }}

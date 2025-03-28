@@ -6,7 +6,7 @@ import mongoConfig from './mongo.config';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [mongoConfig]
+      load: [mongoConfig],
     }),
   ],
 })

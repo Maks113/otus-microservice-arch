@@ -14,7 +14,8 @@ const config: PinoParams = {
         statusCode: res.statusCode,
       })
     }
-  }
+  },
+  exclude: ['/metrics', '/healthcheck'],
 }
 
 @Module({

@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-arch-homework-notifications
+  labels:
+    app: {{ .Release.Name }}-arch-homework-notifications
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-arch-homework-notifications
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-arch-homework-notifications
+    spec:
+      containers:
+        - name: notifications
+          image: "{{ .Values.notifications.image }}:{{ .Values.notifications.tag }}"
+          envFrom:
+            - configMapRef:
+                name: {{ .Release.Name }}-app-config
+          env:
+            - name: PORT
+              value: "{{ .Values.notifications.port }}"
+            - name: MONGO_DB_NAME
+              value: "{{ .Values.notifications.mongo.db }}"
+            - name: MONGO_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ tpl .Values.mongo.password.secret.name . }}
+                  key: {{ .Values.mongo.password.secret.key }}
+            # Kafka configuration
+            - name: KAFKA_BROKERS_CSV
+              value: {{ tpl .Values.kafka.brokers . }}
+          ports:
+            - containerPort: {{ .Values.notifications.port }}
+          livenessProbe:
+            httpGet:
+              path: /healthcheck/
+              port: {{ .Values.notifications.port }}
+          readinessProbe:
+            httpGet:
+              path: /healthcheck/
+              port: {{ .Values.notifications.port }}

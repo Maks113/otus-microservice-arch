@@ -1,8 +1,16 @@
-import { HttpService } from '@nestjs/axios';
-import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Put, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpStatus,
+  Param,
+  Post,
+  Put,
+  Res,
+} from '@nestjs/common';
 import { Response } from 'express';
 import { PinoLogger } from 'nestjs-pino';
-import { firstValueFrom } from 'rxjs';
 import { UserCreateDto } from './dto/user.create.dto';
 import { UserUpdateDto } from './dto/user.update.dto';
 import { UserDocument } from './schemas/user.schema';
@@ -12,7 +20,6 @@ import { UsersService } from './users.service';
 export class UsersController {
   constructor(
     private readonly appService: UsersService,
-    private readonly httpService: HttpService,
     private readonly logger: PinoLogger,
   ) {
     this.logger.setContext(UsersController.name);
@@ -24,10 +31,6 @@ export class UsersController {
     @Body() body: UserCreateDto,
   ): Promise<void> {
     const created = await this.appService.create(body);
-    await firstValueFrom(this.httpService.post('http://billing.arch.homework/account/', {
-      id: body.username,
-      initialBalance: 0,
-    }));
 
     res.status(HttpStatus.CREATED).send(created);
   }
@@ -38,9 +41,7 @@ export class UsersController {
   }
 
   @Get(':id')
-  async readById(
-    @Param('id') id: string,
-  ): Promise<UserDocument> {
+  async readById(@Param('id') id: string): Promise<UserDocument> {
     return this.appService.getById(id);
   }
 
@@ -53,9 +54,7 @@ export class UsersController {
   }
 
   @Delete(':id')
-  delete(
-    @Param('id') id: string,
-  ): Promise<UserDocument> {
+  delete(@Param('id') id: string): Promise<UserDocument> {
     return this.appService.deleteById(id);
   }
 }

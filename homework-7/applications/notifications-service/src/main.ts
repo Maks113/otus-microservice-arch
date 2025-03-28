@@ -30,7 +30,7 @@ async function bootstrap() {
         allowAutoTopicCreation: true,
       },
       consumer: {
-        groupId: configService.get<string>('kafka.consumerGroupId')!,
+        groupId: 'notifications-service',
       },
     }
   });

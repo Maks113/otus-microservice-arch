@@ -1,51 +1,60 @@
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { PinoLogger } from 'nestjs-pino';
+import { HttpService } from '@nestjs/axios';
+import { Inject, Injectable } from '@nestjs/common';
+import { ClientKafka } from '@nestjs/microservices';
+import { firstValueFrom } from 'rxjs';
+import { NotificationEvent } from '../notifications/notificationEvent';
 import { OrderCreateDto } from './dto/order.create.dto';
-import { OrderUpdateDto } from './dto/order.update.dto';
-import { User, UserDocument } from './schemas/order.schema';
 
 @Injectable()
 export class OrdersService {
   constructor(
-    @InjectModel(User.name) private userModel: Model<User>,
-    private readonly logger: PinoLogger,
+    private readonly httpService: HttpService,
+    @Inject('notifications-service')
+    private readonly notificationsClient: ClientKafka,
   ) {}
 
-  async getOrCreateUser(createDto: OrderCreateDto): Promise<UserDocument> {
-    const user: UserDocument = await this.getByUsername(createDto.username);
-    if (!user) {
-      this.logger.info({
-        message: 'User not found. Creating...',
-      });
-      const newUser: UserDocument = new this.userModel(createDto);
-      return newUser.save();
+  async create(orderCreateDto: OrderCreateDto) {
+    try {
+      const result = await firstValueFrom(
+        this.httpService.post(
+          `http://billing.arch.homework/account/${orderCreateDto.userId}/withdraw`,
+          { value: orderCreateDto.orderPrice },
+        ),
+      );
+      if (result.status < 400) {
+        this.sendSuccess(orderCreateDto.orderPrice);
+      } else {
+        this.sendError(orderCreateDto.orderPrice);
+      }
+      return;
+    } catch (e: unknown) {
+      this.sendError(orderCreateDto.orderPrice);
     }
-    this.logger.info({
-      message: 'User found. ',
-      user,
-    });
-
-    return user;
   }
 
-  getByUsername(username: string): Promise<UserDocument> {
-    return this.userModel.findOne({ username }).exec();
+  sendSuccess(price: number) {
+    this.notificationsClient.emit(
+      'notification.send',
+      JSON.stringify(
+        new NotificationEvent(
+          'user@example.com',
+          'Заказ создан',
+          `Успешно создан заказ на сумму: ${Math.abs(price)}`,
+        ),
+      ),
+    );
   }
 
-  list(): Promise<UserDocument[]> {
-    return this.userModel.find().exec();
-  }
-
-  deleteByUsername(username: string): Promise<UserDocument> {
-    return this.userModel.findOneAndDelete({ username }).exec();
-  }
-
-  updateByUsername(
-    username: string,
-    body: OrderUpdateDto,
-  ): Promise<UserDocument> {
-    return this.userModel.findOneAndUpdate({ username }, body).exec();
+  sendError(price: number) {
+    this.notificationsClient.emit(
+      'notification.send',
+      JSON.stringify(
+        new NotificationEvent(
+          'user@example.com',
+          'Ошибка создания заказа',
+          `Ошибка списания по заказу на сумму: ${Math.abs(price)}. Недостаточно средств`,
+        ),
+      ),
+    );
   }
 }

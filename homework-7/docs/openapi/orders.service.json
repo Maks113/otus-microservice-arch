@@ -1,0 +1,84 @@
+{
+	"openapi": "3.0.0",
+	"paths": {
+		"/metrics": {
+			"get": {
+				"operationId": "PrometheusController_index",
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": ""
+					}
+				},
+				"tags": [
+					"Prometheus"
+				]
+			}
+		},
+		"/healthcheck": {
+			"get": {
+				"operationId": "HealthcheckController_ping",
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": ""
+					}
+				},
+				"tags": [
+					"Healthcheck"
+				]
+			}
+		},
+		"/order": {
+			"post": {
+				"operationId": "OrdersController_orderCreate",
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/OrderCreateDto"
+							}
+						}
+					}
+				},
+				"responses": {
+					"201": {
+						"description": ""
+					}
+				},
+				"tags": [
+					"Orders"
+				]
+			}
+		}
+	},
+	"info": {
+		"title": "Microservice architecture",
+		"description": "Microservice architecture app API description",
+		"version": "1.0",
+		"contact": {}
+	},
+	"tags": [],
+	"servers": [],
+	"components": {
+		"schemas": {
+			"OrderCreateDto": {
+				"type": "object",
+				"properties": {
+					"userId": {
+						"type": "string"
+					},
+					"orderPrice": {
+						"type": "number"
+					}
+				},
+				"required": [
+					"userId",
+					"orderPrice"
+				]
+			}
+		}
+	}
+}
