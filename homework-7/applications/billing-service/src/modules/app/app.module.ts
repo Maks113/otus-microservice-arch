@@ -6,7 +6,7 @@ import { HealthcheckModule } from '../healthcheck/healthcheck.module';
 import { MetricsModule } from '../metrics/metrics.module';
 import { MongoModule } from '../mongo/mongo.module';
 import { PinoLoggerModule } from '../pino-logger/pino-logger.module';
-import { UsersModule } from '../users/users.module';
+import { AccountModule } from '../billing/account.module';
 
 @Module({
   imports: [
@@ -16,7 +16,7 @@ import { UsersModule } from '../users/users.module';
     MongoModule,
     HealthcheckModule,
 
-    UsersModule,
+    AccountModule,
   ],
   providers: [
     {

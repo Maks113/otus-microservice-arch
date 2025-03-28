@@ -1,17 +1,17 @@
 import { Body, Controller, Delete, Get, Param, Put, Req, Res } from '@nestjs/common';
 import { PinoLogger } from 'nestjs-pino';
 import { Request, Response } from 'express';
-import { UserUpdateDto } from './dto/user.update.dto';
-import { UserDocument } from './schemas/user.schema';
-import { UsersService } from './users.service';
+import { OrderUpdateDto } from './dto/order.update.dto';
+import { UserDocument } from './schemas/order.schema';
+import { OrdersService } from './orders.service';
 
 @Controller('user')
-export class UsersController {
+export class OrdersController {
   constructor(
-    private readonly appService: UsersService,
+    private readonly appService: OrdersService,
     private readonly logger: PinoLogger,
   ) {
-    this.logger.setContext(UsersController.name);
+    this.logger.setContext(OrdersController.name);
   }
 
   @Get(':username')
@@ -33,7 +33,7 @@ export class UsersController {
     @Req() req: Request,
     @Res() res: Response,
     @Param('username') username: string,
-    @Body() body: UserUpdateDto,
+    @Body() body: OrderUpdateDto,
   ): Promise<UserDocument> {
     if (username !== (req as any).user.username) {
       res.status(401).send({ error: 'Unauthorized request' });

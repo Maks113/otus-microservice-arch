@@ -1,13 +1,13 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 import { PinoLogger } from 'nestjs-pino';
-import { UsersService } from '../modules/users/users.service';
+import { AccountService } from '../modules/billing/account.service';
 
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {
   constructor(
     private readonly logger: PinoLogger,
-    private readonly usersService: UsersService,
+    private readonly usersService: AccountService,
   ) {}
 
   async use(req: Request, _: Response, next: NextFunction) {

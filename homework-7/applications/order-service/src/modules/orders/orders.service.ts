@@ -2,18 +2,18 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { PinoLogger } from 'nestjs-pino';
-import { UserCreateDto } from './dto/user.create.dto';
-import { UserUpdateDto } from './dto/user.update.dto';
-import { User, UserDocument } from './schemas/user.schema';
+import { OrderCreateDto } from './dto/order.create.dto';
+import { OrderUpdateDto } from './dto/order.update.dto';
+import { User, UserDocument } from './schemas/order.schema';
 
 @Injectable()
-export class UsersService {
+export class OrdersService {
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
     private readonly logger: PinoLogger,
   ) {}
 
-  async getOrCreateUser(createDto: UserCreateDto): Promise<UserDocument> {
+  async getOrCreateUser(createDto: OrderCreateDto): Promise<UserDocument> {
     const user: UserDocument = await this.getByUsername(createDto.username);
     if (!user) {
       this.logger.info({
@@ -44,7 +44,7 @@ export class UsersService {
 
   updateByUsername(
     username: string,
-    body: UserUpdateDto,
+    body: OrderUpdateDto,
   ): Promise<UserDocument> {
     return this.userModel.findOneAndUpdate({ username }, body).exec();
   }

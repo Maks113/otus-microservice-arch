@@ -1,0 +1,61 @@
+openapi: 3.0.0
+x-stoplight:
+  id: 531e9xr9evfho
+info:
+  title: notifications-service
+  version: '1.0'
+servers:
+  - url: 'http://notifications.arch.homework'
+paths:
+  /notification:
+    parameters: []
+    get:
+      summary: Get notifications list
+      tags: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notificaiton'
+              examples:
+                Example 1:
+                  value:
+                    to: user@example.ru
+                    subject: Subject
+                    message: message
+                    timestamp: '2025-03-28T11:16:32.497Z'
+        '404':
+          description: User Not Found
+      operationId: get-notifications-list
+      description: ''
+      x-stoplight:
+        id: ceh1u7zsgsmer
+components:
+  schemas:
+    Notificaiton:
+      type: object
+      x-stoplight:
+        id: 9feb7ffc63322
+      x-examples:
+        Example 1:
+          to: user@example.ru
+          subject: Subject
+          message: message
+          timestamp: '2025-03-28T11:16:32.497Z'
+      required:
+        - to
+        - subject
+        - timestamp
+      properties:
+        to:
+          type: string
+        subject:
+          type: string
+        message:
+          type: string
+        timestamp:
+          type: string
+      x-internal: false
+      title: Notification

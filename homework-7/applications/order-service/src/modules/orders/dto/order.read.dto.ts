@@ -1,19 +1,20 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsNotEmpty, IsPhoneNumber, IsString } from 'class-validator';
 
-export class UserUpdateDto {
+export class OrderReadDto {
   @ApiProperty()
-  @IsNotEmpty()
-  @IsString()
+  id: string;
+
+  @ApiProperty()
+  username: string;
+
+  @ApiProperty()
   firstName: string;
 
   @ApiProperty()
-  @IsString()
   lastName?: string;
 
   @ApiProperty()
-  @IsNotEmpty()
-  @IsEmail()
   email: string;
 
   @ApiProperty()

@@ -21,4 +21,4 @@ export class User {
   phone: string;
 }
 
-export const UserSchema = SchemaFactory.createForClass(User);
+export const OrderSchema = SchemaFactory.createForClass(User);
