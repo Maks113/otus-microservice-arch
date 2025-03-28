@@ -1,0 +1,43 @@
+newman
+
+hw-9
+
+→ check orders count
+  GET http://arch.homework/order [200 OK, 212B, 22ms]
+  √  check that there are no orders now
+
+→ make order
+  POST http://arch.homework/order [201 Created, 377B, 15ms]
+  √  order created
+
+→ check orders count after order create
+  GET http://arch.homework/order [200 OK, 374B, 4ms]
+  √  check that the order has been created
+
+→ repeat order
+  POST http://arch.homework/order [409 Conflict, 128B, 4ms]
+  √  create order fails
+
+→ check orders count after order create error
+  GET http://arch.homework/order [200 OK, 374B, 4ms]
+  √  check that the number of orders has not changed
+
+┌─────────────────────────┬─────────────────┬─────────────────┐
+│                         │        executed │          failed │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│              iterations │               1 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│                requests │               5 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│            test-scripts │              10 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│      prerequest-scripts │               5 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│              assertions │               5 │               0 │
+├─────────────────────────┴─────────────────┴─────────────────┤
+│ total run duration: 485ms                                   │
+├─────────────────────────────────────────────────────────────┤
+│ total data received: 483B (approx)                          │
+├─────────────────────────────────────────────────────────────┤
+│ average response time: 9ms [min: 4ms, max: 22ms, s.d.: 7ms] │
+└─────────────────────────────────────────────────────────────┘

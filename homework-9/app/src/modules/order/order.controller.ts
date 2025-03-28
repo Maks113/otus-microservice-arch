@@ -5,7 +5,7 @@ import { OrderCreateDto } from './dto/order.create.dto';
 import { OrderService } from './order.service';
 import { OrderDocument } from './schemas/order.schema';
 
-@Controller('user')
+@Controller('order')
 export class OrderController {
   constructor(
     private readonly appService: OrderService,

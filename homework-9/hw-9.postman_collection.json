@@ -1,0 +1,290 @@
+{
+	"info": {
+		"_postman_id": "0e847324-cdcb-47f8-a7ef-9a599ab4236a",
+		"name": "hw-9",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12400630"
+	},
+	"item": [
+		{
+			"name": "check orders count",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('check that there are no orders now', () => {\r",
+							"    const orders = pm.response.json();\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.expect(orders.length).eql(0);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseUrl}}/order",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"order"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "make order",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('order created', () => {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"itemId\": \"98ae28ec-9a2e-43a2-9a73-9023442d6c3b\",\r\n  \"price\": 1000,\r\n  \"idempotencyKey\": \"03c8baff-439d-4eda-bad9-75c2e9a11c8e\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseUrl}}/order",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"order"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "check orders count after order create",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('check that the order has been created', () => {\r",
+							"    const orders = pm.response.json();\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.expect(orders.length).eql(1);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseUrl}}/order",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"order"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "repeat order",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('create order fails', () => {\r",
+							"    pm.response.to.have.status(409);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"itemId\": \"98ae28ec-9a2e-43a2-9a73-9023442d6c3b\",\r\n  \"price\": 1000,\r\n  \"idempotencyKey\": \"03c8baff-439d-4eda-bad9-75c2e9a11c8e\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseUrl}}/order",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"order"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "check orders count after order create error",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('check that the number of orders has not changed', () => {\r",
+							"    const orders = pm.response.json();\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.expect(orders.length).eql(1);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseUrl}}/order",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"order"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{access_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "BaseUrl",
+			"value": "http://arch.homework",
+			"type": "string"
+		},
+		{
+			"key": "users",
+			"value": ""
+		},
+		{
+			"key": "deletedUsers",
+			"value": ""
+		},
+		{
+			"key": "keycloackServer",
+			"value": "http://keycloak.arch.homework",
+			"type": "default"
+		},
+		{
+			"key": "keycloackRealm",
+			"value": "hw6",
+			"type": "default"
+		},
+		{
+			"key": "keycloackClient",
+			"value": "hw6",
+			"type": "default"
+		},
+		{
+			"key": "keycloackSecret",
+			"value": "u6iHIt8DZS6msnJXthy292OWQGZuXMpC",
+			"type": "default"
+		}
+	]
+}
