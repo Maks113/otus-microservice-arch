@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-app-config
+data:
+  PORT: "{{ .Values.app.port }}"
+  MONGO_HOST: "{{ tpl .Values.app.mongo.hostTpl . }}"
+  MONGO_PORT: "{{ .Values.app.mongo.port }}"
+  MONGO_USER: "{{ .Values.app.mongo.user }}"
+  MONGO_DB_NAME: "{{ .Values.app.mongo.db }}"

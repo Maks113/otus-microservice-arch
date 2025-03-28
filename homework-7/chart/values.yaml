@@ -1,0 +1,22 @@
+mongodb:
+  enabled: true
+  architecture: replicaset
+  replicaCount: 3
+  image:
+    registry: docker.io
+    repository: bitnami/mongodb
+    tag: 4.4.15
+
+app:
+  image: maks113/microservice-architecture-homework-4
+  tag: 1.0.0
+  port: 8000
+  mongo:
+    hostTpl: "{{ .Release.Name }}-mongodb-headless"
+    port: "27017"
+    user: "root"
+    db: "users"
+    password:
+      secret:
+        name: "{{ .Release.Name }}-mongodb"
+        key: "mongodb-root-password"
