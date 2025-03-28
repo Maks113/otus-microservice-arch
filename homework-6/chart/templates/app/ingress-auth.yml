@@ -1,15 +1,15 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ .Release.Name }}-arch-homework-ingress
+  name: {{ .Release.Name }}-api-ingress-auth
 spec:
   ingressClassName: nginx
   rules:
-    - host: "arch.homework"
+    - host: arch.homework
       http:
         paths:
-          - pathType: Prefix
-            path: /
+          - path: /oauth
+            pathType: Prefix
             backend:
               service:
                 name: {{ .Release.Name }}-app-service

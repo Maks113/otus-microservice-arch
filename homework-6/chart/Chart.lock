@@ -2,11 +2,11 @@ dependencies:
 - name: mongodb
   repository: https://charts.bitnami.com/bitnami
   version: 12.1.16
-- name: prometheus
+- name: keycloak
   repository: https://charts.bitnami.com/bitnami
-  version: 1.4.9
-- name: grafana
+  version: 24.4.13
+- name: redis
   repository: https://charts.bitnami.com/bitnami
-  version: 11.6.0
-digest: sha256:f9c477a4b902ca3ae8eeccd900c80b903e4078411345d4b130a3bcdee4b38e29
-generated: "2025-03-26T21:17:14.218119+03:00"
+  version: 20.11.4
+digest: sha256:811d2730cb2b7a08467d55b209718b4aa60377a0aa8a7080081f0b37f3ced2d2
+generated: "2025-03-28T00:25:56.4457751+03:00"

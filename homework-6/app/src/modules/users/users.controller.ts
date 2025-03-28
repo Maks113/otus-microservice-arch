@@ -1,7 +1,6 @@
-import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Put, Res } from '@nestjs/common';
-import { Response } from 'express';
+import { Body, Controller, Delete, Get, Param, Put, Req, Res } from '@nestjs/common';
 import { PinoLogger } from 'nestjs-pino';
-import { UserCreateDto } from './dto/user.create.dto';
+import { Request, Response } from 'express';
 import { UserUpdateDto } from './dto/user.update.dto';
 import { UserDocument } from './schemas/user.schema';
 import { UsersService } from './users.service';
@@ -15,39 +14,46 @@ export class UsersController {
     this.logger.setContext(UsersController.name);
   }
 
-  @Post('')
-  async create(
+  @Get(':username')
+  async readByUsername(
+    @Req() req: Request,
     @Res() res: Response,
-    @Body() body: UserCreateDto,
-  ): Promise<void> {
-    const created = await this.appService.create(body);
-    res.status(HttpStatus.CREATED).send(created);
-  }
-
-  @Get('')
-  async readAll(): Promise<UserDocument[]> {
-    return this.appService.list();
-  }
-
-  @Get(':id')
-  async readById(
-    @Param('id') id: string,
+    @Param('username') username: string,
   ): Promise<UserDocument> {
-    return this.appService.getById(id);
+    if (username !== (req as any).user.username) {
+      res.status(401).send({ error: 'Unauthorized request' });
+      return;
+    }
+
+    res.send(await this.appService.getByUsername(username));
   }
 
-  @Put(':id')
-  update(
-    @Param('id') id: string,
+  @Put(':username')
+  async update(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Param('username') username: string,
     @Body() body: UserUpdateDto,
   ): Promise<UserDocument> {
-    return this.appService.updateById(id, body);
+    if (username !== (req as any).user.username) {
+      res.status(401).send({ error: 'Unauthorized request' });
+      return;
+    }
+
+    res.send(await this.appService.updateByUsername(username, body));
   }
 
-  @Delete(':id')
-  delete(
-    @Param('id') id: string,
+  @Delete(':username')
+  async delete(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Param('username') username: string,
   ): Promise<UserDocument> {
-    return this.appService.deleteById(id);
+    if (username !== (req as any).user.username) {
+      res.status(401).send({ error: 'Unauthorized request' });
+      return;
+    }
+
+    res.send(await this.appService.deleteByUsername(username));
   }
 }

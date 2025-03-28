@@ -1,0 +1,627 @@
+newman
+
+hw-6
+
+→ login admin
+  POST http://keycloak.arch.homework/realms/hw6/protocol/openid-connect/token  
+  200 OK ★ 52ms time ★ 404B↑ 3.02kB↓ size ★ 8↑ 11↓ headers ★ 0 cookies
+  ┌ ↑ urlencoded ★ 108B
+  │ client_id=hw6&username=admin&password=123&grant_type=p
+  │ assword&client_secret=u6iHIt8DZS6msnJXthy292OWQGZuXMpC
+  └ 
+  ┌ ↓ application/json ★ text ★ json ★ utf8 ★ 2.65kB
+  │ {"access_token":"eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUI
+  │ iwia2lkIiA6ICJQOGRCbXNVcFJJd1RwWGp0NUN6bUV0NFhTQlhqRWJ
+  │ jMDczRWdNT01sN3EwIn0.eyJleHAiOjE3NDMxMjA3MDIsImlhdCI6M
+  │ Tc0MzEyMDQwMiwianRpIjoiMjIzY2FjYmItOWQyZS00NzUxLWExNjU
+  │ tYzg4MzY4MjJlNTg5IiwiaXNzIjoiaHR0cDovL2tleWNsb2FrLmFyY
+  │ 2guaG9tZXdvcmsvcmVhbG1zL2h3NiIsImF1ZCI6WyJyZWFsbS1tYW5
+  │ hZ2VtZW50IiwiYWNjb3VudCJdLCJzdWIiOiI3YWI0ZGU1Zi1jZGRiL
+  │ TRkMzgtOWY3Mi03NGQ0OWRlYTkxMjQiLCJ0eXAiOiJCZWFyZXIiLCJ
+  │ henAiOiJodzYiLCJzaWQiOiIwOGQyZGYwZS0wMWI5LTRiYzQtOTEyY
+  │ i01ZmQ0NmQ2OGM0YmMiLCJhY3IiOiIxIiwiYWxsb3dlZC1vcmlnaW5
+  │ zIjpbIioiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbImRlZmF1b
+  │ HQtcm9sZXMtaHc2Iiwib2ZmbGluZV9hY2Nlc3MiLCJ1bWFfYXV0aG9
+  │ yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7InJlYWxtLW1hb
+  │ mFnZW1lbnQiOnsicm9sZXMiOlsidmlldy1pZGVudGl0eS1wcm92aWR
+  │ lcnMiLCJ2aWV3LXJlYWxtIiwibWFuYWdlLWlkZW50aXR5LXByb3ZpZ
+  │ GVycyIsImltcGVyc29uYXRpb24iLCJyZWFsbS1hZG1pbiIsImNyZWF
+  │ 0ZS1jbGllbnQiLCJtYW5hZ2UtdXNlcnMiLCJxdWVyeS1yZWFsbXMiL
+  │ CJ2aWV3LWF1dGhvcml6YXRpb24iLCJxdWVyeS1jbGllbnRzIiwicXV
+  │ lcnktdXNlcnMiLCJtYW5hZ2UtZXZlbnRzIiwibWFuYWdlLXJlYWxtI
+  │ iwidmlldy1ldmVudHMiLCJ2aWV3LXVzZXJzIiwidmlldy1jbGllbnR
+  │ zIiwibWFuYWdlLWF1dGhvcml6YXRpb24iLCJtYW5hZ2UtY2xpZW50c
+  │ yIsInF1ZXJ5LWdyb3VwcyJdfSwiYWNjb3VudCI6eyJyb2xlcyI6WyJ
+  │ tYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwid
+  │ mlldy1wcm9maWxlIl19fSwic2NvcGUiOiJlbWFpbCBwcm9maWxlIiw
+  │ iZW1haWxfdmVyaWZpZWQiOnRydWUsIm5hbWUiOiIxIDEiLCJwcmVmZ
+  │ XJyZWRfdXNlcm5hbWUiOiJhZG1pbiIsImdpdmVuX25hbWUiOiIxIiw
+  │ iZmFtaWx5X25hbWUiOiIxIiwiZW1haWwiOiIxQGEucnUifQ.eCusZg
+  │ g9t2QN9Qw-fWhlwzq9ikKQFaM2kzc6uSI9wc8gBKg21V9WxiMN6x1E
+  │ bE6NF_vp6iuSXOTRQsDaiBcW6ToArmzIDYXPsycX97pQuX09c9n98-
+  │ VR8uOLYjds564vfCnxIbXgkf-h4jShfzvP5ZnfioMfS8tWMmR7s12f
+  │ HnYlWnAGrBkvgPBc7eXQleudKsBVEr6A44vBfIG5Pj4er7YneCOxWV
+  │ syBvEDpnT4s0nFLTlQ4TymUsZuwHfe5Jc4wOLj_HU4xg2N7UxWCsNq
+  │ _ud-AEKkiMtUF7BLeftc64-VMctjItufu42M-VCJoX2S2wusTGGwwr
+  │ 0sf677oRb1mA","expires_in":300,"refresh_expires_in":18
+  │ 00,"refresh_token":"eyJhbGciOiJIUzUxMiIsInR5cCIgOiAiSl
+  │ dUIiwia2lkIiA6ICJhMGQ1ZjQ5ZS0zNDE1LTQyYTctOWExNy04MjU2
+  │ ODIzNWI2NmIifQ.eyJleHAiOjE3NDMxMjIyMDIsImlhdCI6MTc0MzE
+  │ yMDQwMiwianRpIjoiYTMyMzZmMTktN2MyZS00ZDJiLTlkYTgtN
+  │ (showing 2.05kB/2.65kB)
+  └
+  prepare   wait   dns-lookup   tcp-handshake   transfer-start   download   process   total 
+  8ms       6ms    1ms          1ms             37ms             5ms        207µs     60ms  
+
+
+→ register user 1
+  ┌
+  │ 'request', '{\r\n' +
+  │   '    "username": "user-1@hw6.ru",\r\n' +
+  │   '    "emailVerified": true,\r\n' +
+  │   '    "email": "user-1@hw6.ru",\r\n' +
+  │   '    "firstName": "User",\r\n' +
+  │   '    "lastName": "One",\r\n' +
+  │   '    "enabled": true,\r\n' +
+  │   '    "credentials" : [\r\n' +
+  │   '        {\r\n' +
+  │   '            "type" : "password",\r\n' +
+  │   '            "value" : "123"\r\n' +
+  │   '        }\r\n' +
+  │   '    ]\r\n' +
+  │   '}'
+  └
+  POST http://keycloak.arch.homework/admin/realms/hw6/users  
+  409 Conflict ★ 7ms time ★ 2.4kB↑ 373B↓ size ★ 10↑ 9↓ headers ★ 0 cookies
+  ┌ ↑ raw ★ 284B
+  │ {
+  │     "username": "user-1@hw6.ru",
+  │     "emailVerified": true,
+  │     "email": "user-1@hw6.ru",
+  │     "firstName": "User",
+  │     "lastName": "One",
+  │     "enabled": true,
+  │     "credentials" : [
+  │         {
+  │             "type" : "password",
+  │             "value" : "123"
+  │         }
+  │     ]
+  │ }
+  └ 
+  ┌ ↓ application/json ★ text ★ json ★ utf8 ★ 46B
+  │ {"errorMessage":"User exists with same email"}
+  └
+  prepare   wait    dns-lookup   tcp-handshake   transfer-start   download   process   total 
+  634µs     437µs   (cache)      (cache)         4ms              1ms        49µs      7ms   
+
+  ┌
+  │ 'response', '{"errorMessage":"User exists with same em
+  │ ail"}'
+  └
+  1. register user 1
+
+→ get user-1 profile
+  2⠄ TypeError in prerequest-script
+  GET http://arch.homework/user/user-1@hw6.ru  
+  401 Unauthorized ★ 4ms time ★ 283B↑ 123B↓ size ★ 8↑ 4↓ headers ★ 0 cookies
+  ↓ text/plain ★ text ★ plain ★ utf8
+
+  prepare   wait    dns-lookup   tcp-handshake   transfer-start   download   process   total 
+  331µs     331µs   357µs        273µs           1ms              531µs      35µs      3ms   
+
+  ┌
+  │ 'response', ''
+  └
+  √  verifies that an unauthorized user cannot access user-1 profile
+
+→ update user-1
+  ┌
+  │ 'request', '{\n' +
+  │   '  "firstName": "{{$randomFirstName}}",\n' +
+  │   '  "lastName": "{{$randomLastName}}",\n' +
+  │   '  "email": "{{$randomEmail}}",\n' +
+  │   '  "phone": "{{$randomPhoneNumber}}"\n' +
+  │   '}'
+  └
+  PUT http://arch.homework/user/user-1@hw6.ru  
+  401 Unauthorized ★ 2ms time ★ 454B↑ 123B↓ size ★ 10↑ 4↓ headers ★ 0 cookies
+  ┌ ↑ raw ★ 118B
+  │ {
+  │   "firstName": "Alysa",
+  │   "lastName": "Emard",
+  │   "email": "Jana_Schowalter@hotmail.com",
+  │   "phone": "482-290-8326"
+  │ }
+  └ 
+  ↓ text/plain ★ text ★ plain ★ utf8
+
+  prepare   wait    dns-lookup   tcp-handshake   transfer-start   download   process   total 
+  331µs     167µs   (cache)      (cache)         1ms              382µs      23µs      2ms   
+
+  ┌
+  │ 'response', ''
+  └
+  √  verifies that an unauthorized user cannot edit user-1
+
+→ login user 1
+  ┌
+  │ 'request', undefined
+  └
+  POST http://keycloak.arch.homework/realms/hw6/protocol/openid-connect/token  
+  200 OK ★ 40ms time ★ 414B↑ 2.55kB↓ size ★ 8↑ 11↓ headers ★ 0 cookies
+  ┌ ↑ urlencoded ★ 118B
+  │ client_id=hw6&username=user-1@hw6.ru&password=123&gran
+  │ t_type=password&client_secret=u6iHIt8DZS6msnJXthy292OW
+  │ QGZuXMpC
+  └ 
+  ┌ ↓ application/json ★ text ★ json ★ utf8 ★ 2.18kB
+  │ {"access_token":"eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUI
+  │ iwia2lkIiA6ICJQOGRCbXNVcFJJd1RwWGp0NUN6bUV0NFhTQlhqRWJ
+  │ jMDczRWdNT01sN3EwIn0.eyJleHAiOjE3NDMxMjA3MDMsImlhdCI6M
+  │ Tc0MzEyMDQwMywianRpIjoiNDI5Y2E0MzItZTg1OC00MTRiLWEyOGM
+  │ tZGNlMGM2MWQyYTI3IiwiaXNzIjoiaHR0cDovL2tleWNsb2FrLmFyY
+  │ 2guaG9tZXdvcmsvcmVhbG1zL2h3NiIsImF1ZCI6ImFjY291bnQiLCJ
+  │ zdWIiOiI0NTVjYTM0Zi1hMzJiLTQ5MmUtODZlOS00NDk2OWY5ODQ1N
+  │ GUiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJodzYiLCJzaWQiOiI3MDR
+  │ lNmNmOS05YTEzLTRkMDYtOTFiNi1hNDE5OGU3ODdiODkiLCJhY3IiO
+  │ iIxIiwiYWxsb3dlZC1vcmlnaW5zIjpbIioiXSwicmVhbG1fYWNjZXN
+  │ zIjp7InJvbGVzIjpbImRlZmF1bHQtcm9sZXMtaHc2Iiwib2ZmbGluZ
+  │ V9hY2Nlc3MiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2V
+  │ fYWNjZXNzIjp7ImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY
+  │ 291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZml
+  │ sZSJdfX0sInNjb3BlIjoiZW1haWwgcHJvZmlsZSIsImVtYWlsX3Zlc
+  │ mlmaWVkIjp0cnVlLCJuYW1lIjoiVXNlciBPbmUiLCJwcmVmZXJyZWR
+  │ fdXNlcm5hbWUiOiJ1c2VyLTFAaHc2LnJ1IiwiZ2l2ZW5fbmFtZSI6I
+  │ lVzZXIiLCJmYW1pbHlfbmFtZSI6Ik9uZSIsImVtYWlsIjoidXNlci0
+  │ xQGh3Ni5ydSJ9.A8ta6LGNZOUcTHioJ0bymesUrzCL2Wt9j-YeA9ko
+  │ RtSOZbJfs8Ekbq7fKkXR1m0rlJfI8jwextUuee6yzJL_Zt_G_QH1oe
+  │ w7Gf5598UUe67mdrk5s-QO2JsIsbdvdjDIWoky9xWfbURzLfHYzRKy
+  │ dVVgOGDCwSdmpuXDjwTtLiz-v75wWGxv5NZibqrbm0wlsd8SA1Ub-w
+  │ 8WLTab1iKQ9OzpgMsr88_VVV30VXcuV8hiRzASvAbnovJ7cFwjdEHy
+  │ Hrf9TdlE1yNXFDWuNCZaZ-4AnI_jGRhoxzrWJVAty06dwTycLx6oTa
+  │ SPtsHRxhQ2cuuAJyBpXeKz1Aurg71B1g","expires_in":300,"re
+  │ fresh_expires_in":1800,"refresh_token":"eyJhbGciOiJIUz
+  │ UxMiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJhMGQ1ZjQ5ZS0zNDE1
+  │ LTQyYTctOWExNy04MjU2ODIzNWI2NmIifQ.eyJleHAiOjE3NDMxMjI
+  │ yMDMsImlhdCI6MTc0MzEyMDQwMywianRpIjoiMDA1ZGY1ZTMtNTQ2Y
+  │ i00Y2ZmLWJjZDQtYmZhMDU0NGI5OTc0IiwiaXNzIjoiaHR0cDovL2t
+  │ leWNsb2FrLmFyY2guaG9tZXdvcmsvcmVhbG1zL2h3NiIsImF1ZCI6I
+  │ mh0dHA6Ly9rZXljbG9hay5hcmNoLmhvbWV3b3JrL3JlYWxtcy9odzY
+  │ iLCJzdWIiOiI0NTVjYTM0Zi1hMzJiLTQ5MmUtODZlOS00NDk2OWY5O
+  │ DQ1NGUiLCJ0eXAiOiJSZWZyZXNoIiwiYXpwIjoiaHc2Iiwic2lkIjo
+  │ iNzA0ZTZjZjktOWExMy00ZDA2LTkxYjYtYTQxOThlNzg3Yjg5Iiwic
+  │ 2NvcGUiOiJyb2xlcyBiYXNpYyBhY3IgZW1haWwgcHJvZmlsZSB3ZWI
+  │ tb3JpZ2lucyBodzYtc2NvcGUifQ.Z-r1UWQvFaZW6WVgLYXFos2TzU
+  │ SgiimQUkQJVC0OYFbV6A2tG3Z6_ssrka1cV-k1W0FF0Lphtf56
+  │ (showing 2.05kB/2.18kB)
+  └
+  prepare   wait    dns-lookup   tcp-handshake   transfer-start   download   process   total 
+  905µs     583µs   (cache)      (cache)         38ms             580µs      35µs      40ms  
+
+  ┌
+  │ 'response', '{"access_token":"eyJhbGciOiJSUzI1NiIsInR5
+  │ cCIgOiAiSldUIiwia2lkIiA6ICJQOGRCbXNVcFJJd1RwWGp0NUN6bU
+  │ V0NFhTQlhqRWJjMDczRWdNT01sN3EwIn0.eyJleHAiOjE3NDMxMjA3
+  │ MDMsImlhdCI6MTc0MzEyMDQwMywianRpIjoiNDI5Y2E0MzItZTg1OC
+  │ 00MTRiLWEyOGMtZGNlMGM2MWQyYTI3IiwiaXNzIjoiaHR0cDovL2tl
+  │ eWNsb2FrLmFyY2guaG9tZXdvcmsvcmVhbG1zL2h3NiIsImF1ZCI6Im
+  │ FjY291bnQiLCJzdWIiOiI0NTVjYTM0Zi1hMzJiLTQ5MmUtODZlOS00
+  │ NDk2OWY5ODQ1NGUiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJodzYiLC
+  │ JzaWQiOiI3MDRlNmNmOS05YTEzLTRkMDYtOTFiNi1hNDE5OGU3ODdi
+  │ ODkiLCJhY3IiOiIxIiwiYWxsb3dlZC1vcmlnaW5zIjpbIioiXSwicm
+  │ VhbG1fYWNjZXNzIjp7InJvbGVzIjpbImRlZmF1bHQtcm9sZXMtaHc2
+  │ Iiwib2ZmbGluZV9hY2Nlc3MiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfS
+  │ wicmVzb3VyY2VfYWNjZXNzIjp7ImFjY291bnQiOnsicm9sZXMiOlsi
+  │ bWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsIn
+  │ ZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoiZW1haWwgcHJvZmlsZSIs
+  │ ImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJuYW1lIjoiVXNlciBPbmUiLC
+  │ JwcmVmZXJyZWRfdXNlcm5hbWUiOiJ1c2VyLTFAaHc2LnJ1IiwiZ2l2
+  │ ZW5fbmFtZSI6IlVzZXIiLCJmYW1pbHlfbmFtZSI6Ik9uZSIsImVtYW
+  │ lsIjoidXNlci0xQGh3Ni5ydSJ9.A8ta6LGNZOUcTHioJ0bymesUrzC
+  │ L2Wt9j-YeA9koRtSOZbJfs8Ekbq7fKkXR1m0rlJfI8jwextUuee6yz
+  │ JL_Zt_G_QH1oew7Gf5598UUe67mdrk5s-QO2JsIsbdvdjDIWoky9xW
+  │ fbURzLfHYzRKydVVgOGDCwSdmpuXDjwTtLiz-v75wWGxv5NZibqrbm
+  │ 0wlsd8SA1Ub-w8WLTab1iKQ9OzpgMsr88_VVV30VXcuV8hiRzASvAb
+  │ novJ7cFwjdEHyHrf9TdlE1yNXFDWuNCZaZ-4AnI_jGRhoxzrWJVAty
+  │ 06dwTycLx6oTaSPtsHRxhQ2cuuAJyBpXeKz1Aurg71B1g","expire
+  │ s_in":300,"refresh_expires_in":1800,"refresh_token":"e
+  │ yJhbGciOiJIUzUxMiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJhMGQ
+  │ 1ZjQ5ZS0zNDE1LTQyYTctOWExNy04MjU2ODIzNWI2NmIifQ.eyJleH
+  │ AiOjE3NDMxMjIyMDMsImlhdCI6MTc0MzEyMDQwMywianRpIjoiMDA1
+  │ ZGY1ZTMtNTQ2Yi00Y2ZmLWJjZDQtYmZhMDU0NGI5OTc0IiwiaXNzIj
+  │ oiaHR0cDovL2tleWNsb2FrLmFyY2guaG9tZXdvcmsvcmVhbG1zL2h3
+  │ NiIsImF1ZCI6Imh0dHA6Ly9rZXljbG9hay5hcmNoLmhvbWV3b3JrL3
+  │ JlYWxtcy9odzYiLCJzdWIiOiI0NTVjYTM0Zi1hMzJiLTQ5MmUtODZl
+  │ OS00NDk2OWY5ODQ1NGUiLCJ0eXAiOiJSZWZyZXNoIiwiYXpwIjoiaH
+  │ c2Iiwic2lkIjoiNzA0ZTZjZjktOWExMy00ZDA2LTkxYjYtYTQxOThl
+  │ Nzg3Yjg5Iiwic2NvcGUiOiJyb2xlcyBiYXNpYyBhY3IgZW1haWwgcH
+  │ JvZmlsZSB3ZWItb3JpZ2lucyBodzYtc2NvcGUifQ.Z-r1UWQvFaZW6
+  │ WVgLYXFos2TzUSgiimQUkQJVC0OYFbV6A2tG3Z6_ssrka1cV-k1W0F
+  │ F0Lphtf56AaDYr6pNeA","token_type":"Bearer","not-before
+  │ -policy":0,"session_state":"704e6cf9-9a13-4d06-91b6-a4
+  │ 198e787b89","scope":"email profile"}'
+  └
+  √  login user-1
+
+→ get user-1 profile (init)
+  3⠄ TypeError in prerequest-script
+  GET http://arch.homework/user/user-1@hw6.ru  
+  200 OK ★ 6ms time ★ 1.58kB↑ 396B↓ size ★ 8↑ 7↓ headers ★ 0 cookies
+  ┌ ↓ application/json ★ text ★ json ★ utf8 ★ 169B
+  │ {"_id":"67e5d8098b292eac3cc6475a","username":"user-1@h
+  │ w6.ru","firstName":"Angie","lastName":"Keebler","email
+  │ ":"Leone.Quitzon79@yahoo.com","__v":0,"phone":"279-582
+  │ -1311"}
+  └
+  prepare   wait    dns-lookup   tcp-handshake   transfer-start   download   process   total 
+  392µs     201µs   (cache)      (cache)         5ms              510µs      24µs      6ms   
+
+  ┌
+  │ 'response', '{"_id":"67e5d8098b292eac3cc6475a","userna
+  │ me":"user-1@hw6.ru","firstName":"Angie","lastName":"Ke
+  │ ebler","email":"Leone.Quitzon79@yahoo.com","__v":0,"ph
+  │ one":"279-582-1311"}'
+  └
+  √  get user profile and save value to check
+
+→ update user-1 (login)
+  ┌
+  │ 'request', '{\n' +
+  │   '  "firstName": "{{$randomFirstName}}",\n' +
+  │   '  "lastName": "{{$randomLastName}}",\n' +
+  │   '  "email": "{{$randomEmail}}",\n' +
+  │   '  "phone": "{{$randomPhoneNumber}}"\n' +
+  │   '}'
+  └
+  PUT http://arch.homework/user/user-1@hw6.ru  
+  200 OK ★ 18ms time ★ 1.75kB↑ 396B↓ size ★ 10↑ 7↓ headers ★ 0 cookies
+  ┌ ↑ raw ★ 120B
+  │ {
+  │   "firstName": "Evangeline",
+  │   "lastName": "Nicolas",
+  │   "email": "Reymundo98@hotmail.com",
+  │   "phone": "264-650-3165"
+  │ }
+  └ 
+  ┌ ↓ application/json ★ text ★ json ★ utf8 ★ 169B
+  │ {"_id":"67e5d8098b292eac3cc6475a","username":"user-1@h
+  │ w6.ru","firstName":"Angie","lastName":"Keebler","email
+  │ ":"Leone.Quitzon79@yahoo.com","__v":0,"phone":"279-582
+  │ -1311"}
+  └
+  prepare   wait    dns-lookup   tcp-handshake   transfer-start   download   process   total 
+  423µs     276µs   (cache)      (cache)         16ms             596µs      26µs      17ms  
+
+  ┌
+  │ 'response', '{"_id":"67e5d8098b292eac3cc6475a","userna
+  │ me":"user-1@hw6.ru","firstName":"Angie","lastName":"Ke
+  │ ebler","email":"Leone.Quitzon79@yahoo.com","__v":0,"ph
+  │ one":"279-582-1311"}'
+  └
+  √  change user-1 profile
+
+→ get user-1 profile (changed)
+  4⠄ TypeError in prerequest-script
+  GET http://arch.homework/user/user-1@hw6.ru  
+  200 OK ★ 6ms time ★ 1.58kB↑ 398B↓ size ★ 8↑ 7↓ headers ★ 0 cookies
+  ┌ ↓ application/json ★ text ★ json ★ utf8 ★ 171B
+  │ {"_id":"67e5d8098b292eac3cc6475a","username":"user-1@h
+  │ w6.ru","firstName":"Evangeline","lastName":"Nicolas","
+  │ email":"Reymundo98@hotmail.com","__v":0,"phone":"264-6
+  │ 50-3165"}
+  └
+  prepare   wait    dns-lookup   tcp-handshake   transfer-start   download   process   total 
+  1ms       191µs   (cache)      (cache)         4ms              419µs      23µs      6ms   
+
+  ┌
+  │ 'response', '{"_id":"67e5d8098b292eac3cc6475a","userna
+  │ me":"user-1@hw6.ru","firstName":"Evangeline","lastName
+  │ ":"Nicolas","email":"Reymundo98@hotmail.com","__v":0,"
+  │ phone":"264-650-3165"}'
+  └
+  √  get user profile and save value to check
+
+→ logout
+  POST http://keycloak.arch.homework/realms/hw6/protocol/openid-connect/logout  
+  204 No Content ★ 10ms time ★ 2.41kB↑ 409B↓ size ★ 9↑ 10↓ headers ★ 0 cookies
+  ┌ ↑ urlencoded ★ 779B
+  │ client_id=hw6&refresh_token=eyJhbGciOiJIUzUxMiIsInR5cC
+  │ IgOiAiSldUIiwia2lkIiA6ICJhMGQ1ZjQ5ZS0zNDE1LTQyYTctOWEx
+  │ Ny04MjU2ODIzNWI2NmIifQ.eyJleHAiOjE3NDMxMjIyMDMsImlhdCI
+  │ 6MTc0MzEyMDQwMywianRpIjoiMDA1ZGY1ZTMtNTQ2Yi00Y2ZmLWJjZ
+  │ DQtYmZhMDU0NGI5OTc0IiwiaXNzIjoiaHR0cDovL2tleWNsb2FrLmF
+  │ yY2guaG9tZXdvcmsvcmVhbG1zL2h3NiIsImF1ZCI6Imh0dHA6Ly9rZ
+  │ XljbG9hay5hcmNoLmhvbWV3b3JrL3JlYWxtcy9odzYiLCJzdWIiOiI
+  │ 0NTVjYTM0Zi1hMzJiLTQ5MmUtODZlOS00NDk2OWY5ODQ1NGUiLCJ0e
+  │ XAiOiJSZWZyZXNoIiwiYXpwIjoiaHc2Iiwic2lkIjoiNzA0ZTZjZjk
+  │ tOWExMy00ZDA2LTkxYjYtYTQxOThlNzg3Yjg5Iiwic2NvcGUiOiJyb
+  │ 2xlcyBiYXNpYyBhY3IgZW1haWwgcHJvZmlsZSB3ZWItb3JpZ2lucyB
+  │ odzYtc2NvcGUifQ.Z-r1UWQvFaZW6WVgLYXFos2TzUSgiimQUkQJVC
+  │ 0OYFbV6A2tG3Z6_ssrka1cV-k1W0FF0Lphtf56AaDYr6pNeA&redir
+  │ ect_url=http://localhost&client_secret=u6iHIt8DZS6msnJ
+  │ Xthy292OWQGZuXMpC
+  └ 
+  ↓ text/plain ★ text ★ plain ★ utf8
+
+  prepare   wait    dns-lookup   tcp-handshake   transfer-start   download   process   total 
+  1ms       303µs   (cache)      (cache)         8ms              771µs      43µs      10ms  
+
+
+→ register user 2
+  ┌
+  │ 'request', '{\r\n' +
+  │   '    "username": "user-2@hw6.ru",\r\n' +
+  │   '    "emailVerified": true,\r\n' +
+  │   '    "email": "user-2@hw6.ru",\r\n' +
+  │   '    "firstName": "User",\r\n' +
+  │   '    "lastName": "Two",\r\n' +
+  │   '    "enabled": true,\r\n' +
+  │   '    "credentials" : [\r\n' +
+  │   '        {\r\n' +
+  │   '            "type" : "password",\r\n' +
+  │   '            "value" : "123"\r\n' +
+  │   '        }\r\n' +
+  │   '    ]\r\n' +
+  │   '}'
+  └
+  POST http://keycloak.arch.homework/admin/realms/hw6/users  
+  409 Conflict ★ 7ms time ★ 2.4kB↑ 373B↓ size ★ 10↑ 9↓ headers ★ 0 cookies
+  ┌ ↑ raw ★ 284B
+  │ {
+  │     "username": "user-2@hw6.ru",
+  │     "emailVerified": true,
+  │     "email": "user-2@hw6.ru",
+  │     "firstName": "User",
+  │     "lastName": "Two",
+  │     "enabled": true,
+  │     "credentials" : [
+  │         {
+  │             "type" : "password",
+  │             "value" : "123"
+  │         }
+  │     ]
+  │ }
+  └ 
+  ┌ ↓ application/json ★ text ★ json ★ utf8 ★ 46B
+  │ {"errorMessage":"User exists with same email"}
+  └
+  prepare   wait    dns-lookup   tcp-handshake   transfer-start   download   process   total 
+  560µs     535µs   (cache)      (cache)         5ms              485µs      39µs      6ms   
+
+  ┌
+  │ 'response', '{"errorMessage":"User exists with same em
+  │ ail"}'
+  └
+  5. register user 2
+
+→ login user 2
+  ┌
+  │ 'request', undefined
+  └
+  POST http://keycloak.arch.homework/realms/hw6/protocol/openid-connect/token  
+  200 OK ★ 33ms time ★ 414B↑ 2.55kB↓ size ★ 8↑ 11↓ headers ★ 0 cookies
+  ┌ ↑ urlencoded ★ 118B
+  │ client_id=hw6&username=user-2@hw6.ru&password=123&gran
+  │ t_type=password&client_secret=u6iHIt8DZS6msnJXthy292OW
+  │ QGZuXMpC
+  └ 
+  ┌ ↓ application/json ★ text ★ json ★ utf8 ★ 2.18kB
+  │ {"access_token":"eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUI
+  │ iwia2lkIiA6ICJQOGRCbXNVcFJJd1RwWGp0NUN6bUV0NFhTQlhqRWJ
+  │ jMDczRWdNT01sN3EwIn0.eyJleHAiOjE3NDMxMjA3MDMsImlhdCI6M
+  │ Tc0MzEyMDQwMywianRpIjoiNzk4YjdiODItYjIwYi00YmI2LWFkMTc
+  │ tOTQyZjkyYjcyOWFkIiwiaXNzIjoiaHR0cDovL2tleWNsb2FrLmFyY
+  │ 2guaG9tZXdvcmsvcmVhbG1zL2h3NiIsImF1ZCI6ImFjY291bnQiLCJ
+  │ zdWIiOiJiMjFmYzYzZi1hY2I1LTRmMTMtYmZhOC1jOWQzZjI1OWUxN
+  │ DEiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJodzYiLCJzaWQiOiJlMzE
+  │ 2YzdkMC1hNGFiLTRhMmItYjJkMS1jY2U3YmQ3ZWE2NzUiLCJhY3IiO
+  │ iIxIiwiYWxsb3dlZC1vcmlnaW5zIjpbIioiXSwicmVhbG1fYWNjZXN
+  │ zIjp7InJvbGVzIjpbImRlZmF1bHQtcm9sZXMtaHc2Iiwib2ZmbGluZ
+  │ V9hY2Nlc3MiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2V
+  │ fYWNjZXNzIjp7ImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY
+  │ 291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZml
+  │ sZSJdfX0sInNjb3BlIjoiZW1haWwgcHJvZmlsZSIsImVtYWlsX3Zlc
+  │ mlmaWVkIjp0cnVlLCJuYW1lIjoiVXNlciBUd28iLCJwcmVmZXJyZWR
+  │ fdXNlcm5hbWUiOiJ1c2VyLTJAaHc2LnJ1IiwiZ2l2ZW5fbmFtZSI6I
+  │ lVzZXIiLCJmYW1pbHlfbmFtZSI6IlR3byIsImVtYWlsIjoidXNlci0
+  │ yQGh3Ni5ydSJ9.kqO9MqCmT8aO9dfcQ-xYSa79wKf3CTG4PeBO7rw6
+  │ P32tIwogxHX30gvO7hZnYV5BGDzoe7Du4qXS6cgOcBNEtwM0GRsicQ
+  │ 52piRRq4tUJPzMfrHNRwUSSnwssbRkVKXjHy6iVXiKyrG9eomcqjeB
+  │ UCXYx3YCHo7P_oC5_qravhV3_Pmu47ONLeJ0gHrc1HQqLJxWbqZuJt
+  │ Frjlo5rfwcOJYRhxL2RtZf1EK1_luOMeh1j_rwaNJz5yMXGpAtGmwf
+  │ 9AQHmsenT8I6hnmZrS2_lPf3uQ7voRdwHcDaYk-jWPWhwTRe5HkNUQ
+  │ 9kxToskksIIflL2DbXE-CJUUMG_pF-lg","expires_in":300,"re
+  │ fresh_expires_in":1800,"refresh_token":"eyJhbGciOiJIUz
+  │ UxMiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJhMGQ1ZjQ5ZS0zNDE1
+  │ LTQyYTctOWExNy04MjU2ODIzNWI2NmIifQ.eyJleHAiOjE3NDMxMjI
+  │ yMDMsImlhdCI6MTc0MzEyMDQwMywianRpIjoiNTNkYjRiNTYtNzY5Y
+  │ y00NzU3LWExNTEtYTJmMjM1MzM4MWIxIiwiaXNzIjoiaHR0cDovL2t
+  │ leWNsb2FrLmFyY2guaG9tZXdvcmsvcmVhbG1zL2h3NiIsImF1ZCI6I
+  │ mh0dHA6Ly9rZXljbG9hay5hcmNoLmhvbWV3b3JrL3JlYWxtcy9odzY
+  │ iLCJzdWIiOiJiMjFmYzYzZi1hY2I1LTRmMTMtYmZhOC1jOWQzZjI1O
+  │ WUxNDEiLCJ0eXAiOiJSZWZyZXNoIiwiYXpwIjoiaHc2Iiwic2lkIjo
+  │ iZTMxNmM3ZDAtYTRhYi00YTJiLWIyZDEtY2NlN2JkN2VhNjc1Iiwic
+  │ 2NvcGUiOiJyb2xlcyBiYXNpYyBhY3IgZW1haWwgcHJvZmlsZSB3ZWI
+  │ tb3JpZ2lucyBodzYtc2NvcGUifQ.g42T_FokNVqC9C8fD9HUXUPhTQ
+  │ GOLxW0JDRh2EALyhapvF4nTrLmo3_KSPckvkAAMnIaqH_bAmdX
+  │ (showing 2.05kB/2.18kB)
+  └
+  prepare   wait    dns-lookup   tcp-handshake   transfer-start   download   process   total 
+  483µs     141µs   (cache)      (cache)         31ms             494µs      40µs      32ms  
+
+  ┌
+  │ 'response', '{"access_token":"eyJhbGciOiJSUzI1NiIsInR5
+  │ cCIgOiAiSldUIiwia2lkIiA6ICJQOGRCbXNVcFJJd1RwWGp0NUN6bU
+  │ V0NFhTQlhqRWJjMDczRWdNT01sN3EwIn0.eyJleHAiOjE3NDMxMjA3
+  │ MDMsImlhdCI6MTc0MzEyMDQwMywianRpIjoiNzk4YjdiODItYjIwYi
+  │ 00YmI2LWFkMTctOTQyZjkyYjcyOWFkIiwiaXNzIjoiaHR0cDovL2tl
+  │ eWNsb2FrLmFyY2guaG9tZXdvcmsvcmVhbG1zL2h3NiIsImF1ZCI6Im
+  │ FjY291bnQiLCJzdWIiOiJiMjFmYzYzZi1hY2I1LTRmMTMtYmZhOC1j
+  │ OWQzZjI1OWUxNDEiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJodzYiLC
+  │ JzaWQiOiJlMzE2YzdkMC1hNGFiLTRhMmItYjJkMS1jY2U3YmQ3ZWE2
+  │ NzUiLCJhY3IiOiIxIiwiYWxsb3dlZC1vcmlnaW5zIjpbIioiXSwicm
+  │ VhbG1fYWNjZXNzIjp7InJvbGVzIjpbImRlZmF1bHQtcm9sZXMtaHc2
+  │ Iiwib2ZmbGluZV9hY2Nlc3MiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfS
+  │ wicmVzb3VyY2VfYWNjZXNzIjp7ImFjY291bnQiOnsicm9sZXMiOlsi
+  │ bWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsIn
+  │ ZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoiZW1haWwgcHJvZmlsZSIs
+  │ ImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJuYW1lIjoiVXNlciBUd28iLC
+  │ JwcmVmZXJyZWRfdXNlcm5hbWUiOiJ1c2VyLTJAaHc2LnJ1IiwiZ2l2
+  │ ZW5fbmFtZSI6IlVzZXIiLCJmYW1pbHlfbmFtZSI6IlR3byIsImVtYW
+  │ lsIjoidXNlci0yQGh3Ni5ydSJ9.kqO9MqCmT8aO9dfcQ-xYSa79wKf
+  │ 3CTG4PeBO7rw6P32tIwogxHX30gvO7hZnYV5BGDzoe7Du4qXS6cgOc
+  │ BNEtwM0GRsicQ52piRRq4tUJPzMfrHNRwUSSnwssbRkVKXjHy6iVXi
+  │ KyrG9eomcqjeBUCXYx3YCHo7P_oC5_qravhV3_Pmu47ONLeJ0gHrc1
+  │ HQqLJxWbqZuJtFrjlo5rfwcOJYRhxL2RtZf1EK1_luOMeh1j_rwaNJ
+  │ z5yMXGpAtGmwf9AQHmsenT8I6hnmZrS2_lPf3uQ7voRdwHcDaYk-jW
+  │ PWhwTRe5HkNUQ9kxToskksIIflL2DbXE-CJUUMG_pF-lg","expire
+  │ s_in":300,"refresh_expires_in":1800,"refresh_token":"e
+  │ yJhbGciOiJIUzUxMiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJhMGQ
+  │ 1ZjQ5ZS0zNDE1LTQyYTctOWExNy04MjU2ODIzNWI2NmIifQ.eyJleH
+  │ AiOjE3NDMxMjIyMDMsImlhdCI6MTc0MzEyMDQwMywianRpIjoiNTNk
+  │ YjRiNTYtNzY5Yy00NzU3LWExNTEtYTJmMjM1MzM4MWIxIiwiaXNzIj
+  │ oiaHR0cDovL2tleWNsb2FrLmFyY2guaG9tZXdvcmsvcmVhbG1zL2h3
+  │ NiIsImF1ZCI6Imh0dHA6Ly9rZXljbG9hay5hcmNoLmhvbWV3b3JrL3
+  │ JlYWxtcy9odzYiLCJzdWIiOiJiMjFmYzYzZi1hY2I1LTRmMTMtYmZh
+  │ OC1jOWQzZjI1OWUxNDEiLCJ0eXAiOiJSZWZyZXNoIiwiYXpwIjoiaH
+  │ c2Iiwic2lkIjoiZTMxNmM3ZDAtYTRhYi00YTJiLWIyZDEtY2NlN2Jk
+  │ N2VhNjc1Iiwic2NvcGUiOiJyb2xlcyBiYXNpYyBhY3IgZW1haWwgcH
+  │ JvZmlsZSB3ZWItb3JpZ2lucyBodzYtc2NvcGUifQ.g42T_FokNVqC9
+  │ C8fD9HUXUPhTQGOLxW0JDRh2EALyhapvF4nTrLmo3_KSPckvkAAMnI
+  │ aqH_bAmdXdnCqsnzyOQ","token_type":"Bearer","not-before
+  │ -policy":0,"session_state":"e316c7d0-a4ab-4a2b-b2d1-cc
+  │ e7bd7ea675","scope":"email profile"}'
+  └
+  √  login user-2
+
+→ get user-1 profile (from user-2)
+  6⠄ TypeError in prerequest-script
+  GET http://arch.homework/user/user-1@hw6.ru  
+  401 Unauthorized ★ 6ms time ★ 1.58kB↑ 268B↓ size ★ 8↑ 7↓ headers ★ 0 cookies
+  ┌ ↓ application/json ★ text ★ json ★ utf8 ★ 32B
+  │ {"error":"Unauthorized request"}
+  └
+  prepare   wait    dns-lookup   tcp-handshake   transfer-start   download   process   total 
+  608µs     317µs   (cache)      (cache)         4ms              471µs      51µs      6ms   
+
+  ┌
+  │ 'response', '{"error":"Unauthorized request"}'
+  └
+  √  verifies that user-2 cannot access user-1 profile
+
+→ update user-1 (from user-2)
+  ┌
+  │ 'request', '{\n' +
+  │   '  "firstName": "{{$randomFirstName}}",\n' +
+  │   '  "lastName": "{{$randomLastName}}",\n' +
+  │   '  "email": "{{$randomEmail}}",\n' +
+  │   '  "phone": "{{$randomPhoneNumber}}"\n' +
+  │   '}'
+  └
+  PUT http://arch.homework/user/user-1@hw6.ru  
+  401 Unauthorized ★ 6ms time ★ 1.75kB↑ 268B↓ size ★ 10↑ 7↓ headers ★ 0 cookies
+  ┌ ↑ raw ★ 116B
+  │ {
+  │   "firstName": "Cletus",
+  │   "lastName": "Hills",
+  │   "email": "Cassie.Schuppe@gmail.com",
+  │   "phone": "652-797-8478"
+  │ }
+  └ 
+  ┌ ↓ application/json ★ text ★ json ★ utf8 ★ 32B
+  │ {"error":"Unauthorized request"}
+  └
+  prepare   wait    dns-lookup   tcp-handshake   transfer-start   download   process   total 
+  600µs     323µs   (cache)      (cache)         4ms              430µs      20µs      5ms   
+
+  ┌
+  │ 'response', '{"error":"Unauthorized request"}'
+  └
+  √  verifies that user-2 cannot edit user-1 profile
+
+→ get user-2 profile
+  GET http://arch.homework/user/user-2@hw6.ru  
+  200 OK ★ 5ms time ★ 1.58kB↑ 375B↓ size ★ 8↑ 7↓ headers ★ 0 cookies
+  ┌ ↓ application/json ★ text ★ json ★ utf8 ★ 148B
+  │ {"_id":"67e5d9a3d4f399af1111e58c","username":"user-2@h
+  │ w6.ru","firstName":"user-2@hw6.ru","lastName":"user-2@
+  │ hw6.ru","email":"user-2@hw6.ru","__v":0}
+  └
+  prepare   wait    dns-lookup   tcp-handshake   transfer-start   download   process   total 
+  279µs     141µs   (cache)      (cache)         3ms              278µs      15µs      4ms   
+
+
+→ update user-2
+  PUT http://arch.homework/user/:id  
+  401 Unauthorized ★ 5ms time ★ 1.74kB↑ 268B↓ size ★ 10↑ 7↓ headers ★ 0 cookies
+  ┌ ↑ raw ★ 119B
+  │ {
+  │   "firstName": "Marianne",
+  │   "lastName": "Zulauf",
+  │   "email": "Adolf.Crooks97@gmail.com",
+  │   "phone": "536-640-0313"
+  │ }
+  └ 
+  ┌ ↓ application/json ★ text ★ json ★ utf8 ★ 32B
+  │ {"error":"Unauthorized request"}
+  └
+  prepare   wait    dns-lookup   tcp-handshake   transfer-start   download   process   total 
+  461µs     135µs   (cache)      (cache)         3ms              564µs      24µs      4ms   
+
+
+┌─────────────────────────┬────────────────────┬───────────────────┐
+│                         │           executed │            failed │
+├─────────────────────────┼────────────────────┼───────────────────┤
+│              iterations │                  1 │                 0 │
+├─────────────────────────┼────────────────────┼───────────────────┤
+│                requests │                 15 │                 0 │
+├─────────────────────────┼────────────────────┼───────────────────┤
+│            test-scripts │                 28 │                 0 │
+├─────────────────────────┼────────────────────┼───────────────────┤
+│      prerequest-scripts │                 28 │                 4 │
+├─────────────────────────┼────────────────────┼───────────────────┤
+│              assertions │                 11 │                 2 │
+├─────────────────────────┴────────────────────┴───────────────────┤
+│ total run duration: 1463ms                                       │
+├──────────────────────────────────────────────────────────────────┤
+│ total data received: 7.86kB (approx)                             │
+├──────────────────────────────────────────────────────────────────┤
+│ average response time: 13ms [min: 2ms, max: 52ms, s.d.: 14ms]    │
+├──────────────────────────────────────────────────────────────────┤
+│ average DNS lookup time: 1ms [min: 357µs, max: 1ms, s.d.: 467µs] │
+├──────────────────────────────────────────────────────────────────┤
+│ average first byte time: 11ms [min: 1ms, max: 38ms, s.d.: 12ms]  │
+└──────────────────────────────────────────────────────────────────┘
+
+[31m  # [39m[31m failure        [39m[31m detail                                                [39m
+[90m    [39m[90m                [39m[90m                                                       [39m
+ 1.  AssertionError  register user 1                                       
+                     expected response to have status code 201 but got 409 
+                     at assertion:0 in test-script                         
+                     inside "register user 1"                              
+[90m    [39m[90m                [39m[90m                                                       [39m
+ 2.  TypeError                                                             
+                     Cannot read properties of undefined (reading 'raw')   
+                     at prerequest-script                                  
+                     inside "get user-1 profile"                           
+[90m    [39m[90m                [39m[90m                                                       [39m
+ 3.  TypeError                                                             
+                     Cannot read properties of undefined (reading 'raw')   
+                     at prerequest-script                                  
+                     inside "get user-1 profile (init)"                    
+[90m    [39m[90m                [39m[90m                                                       [39m
+ 4.  TypeError                                                             
+                     Cannot read properties of undefined (reading 'raw')   
+                     at prerequest-script                                  
+                     inside "get user-1 profile (changed)"                 
+[90m    [39m[90m                [39m[90m                                                       [39m
+ 5.  AssertionError  register user 2                                       
+                     expected response to have status code 201 but got 409 
+                     at assertion:0 in test-script                         
+                     inside "register user 2"                              
+[90m    [39m[90m                [39m[90m                                                       [39m
+ 6.  TypeError                                                             
+                     Cannot read properties of undefined (reading 'raw')   
+                     at prerequest-script                                  
+                     inside "get user-1 profile (from user-2)"             

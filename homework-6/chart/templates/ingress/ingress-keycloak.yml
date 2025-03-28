@@ -1,17 +1,17 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ .Release.Name }}-mongodb-metrics-ingress
+  name: {{ .Release.Name }}-keycloak-ingress
 spec:
   ingressClassName: nginx
   rules:
-    - host: mongo-metrics.arch.homework
+    - host: keycloak.arch.homework
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: {{ .Release.Name }}-mongodb-metrics
+                name: {{ .Release.Name }}-keycloak
                 port:
-                  number: 9216
+                  number: 80

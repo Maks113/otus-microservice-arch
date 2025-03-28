@@ -1,0 +1,978 @@
+{
+	"info": {
+		"_postman_id": "5776f31b-24ab-448a-8863-5a9b233da744",
+		"name": "hw-6",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12400630"
+	},
+	"item": [
+		{
+			"name": "login admin",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"const body = pm.response.json();\r",
+							"pm.environment.set('refresh_token', body.refresh_token);\r",
+							"pm.environment.set('admin_token', body.access_token);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "client_id",
+							"value": "hw6",
+							"type": "text"
+						},
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "123",
+							"type": "text"
+						},
+						{
+							"key": "grant_type",
+							"value": "password",
+							"type": "text"
+						},
+						{
+							"key": "client_secret",
+							"value": "{{keycloackSecret}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{keycloackServer}}/realms/hw6/protocol/openid-connect/token",
+					"host": [
+						"{{keycloackServer}}"
+					],
+					"path": [
+						"realms",
+						"hw6",
+						"protocol",
+						"openid-connect",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "register user 1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"console.log('response', pm.response.text())\r",
+							"\r",
+							"pm.test('register user 1', () => {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"console.log('request', pm.request.body.raw)"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{admin_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"user-1@hw6.ru\",\r\n    \"emailVerified\": true,\r\n    \"email\": \"user-1@hw6.ru\",\r\n    \"firstName\": \"User\",\r\n    \"lastName\": \"One\",\r\n    \"enabled\": true,\r\n    \"credentials\" : [\r\n        {\r\n            \"type\" : \"password\",\r\n            \"value\" : \"123\"\r\n        }\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{keycloackServer}}/admin/realms/{{keycloackRealm}}/users",
+					"host": [
+						"{{keycloackServer}}"
+					],
+					"path": [
+						"admin",
+						"realms",
+						"{{keycloackRealm}}",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get user-1 profile",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"console.log('request', pm.request.body.raw)"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"console.log('response', pm.response.text())\r",
+							"\r",
+							"pm.test('verifies that an unauthorized user cannot access user-1 profile', () => {\r",
+							"    pm.response.to.have.status(401);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BaseUrl}}/user/:username",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"user",
+						":username"
+					],
+					"variable": [
+						{
+							"key": "username",
+							"value": "user-1@hw6.ru"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update user-1",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"console.log('request', pm.request.body.raw)"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"console.log('response', pm.response.text())\r",
+							"\r",
+							"pm.test('verifies that an unauthorized user cannot edit user-1', () => {\r",
+							"    pm.response.to.have.status(401);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"firstName\": \"{{$randomFirstName}}\",\n  \"lastName\": \"{{$randomLastName}}\",\n  \"email\": \"{{$randomEmail}}\",\n  \"phone\": \"{{$randomPhoneNumber}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseUrl}}/user/:username",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"user",
+						":username"
+					],
+					"variable": [
+						{
+							"key": "username",
+							"value": "user-1@hw6.ru"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login user 1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"console.log('response', pm.response.text())\r",
+							"\r",
+							"const body = pm.response.json();\r",
+							"pm.environment.set('refresh_token', body.refresh_token);\r",
+							"pm.environment.set('access_token', body.access_token);\r",
+							"\r",
+							"pm.test('login user-1', () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"console.log('request', pm.request.body.raw)"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "client_id",
+							"value": "{{keycloackClient}}",
+							"type": "text"
+						},
+						{
+							"key": "username",
+							"value": "user-1@hw6.ru",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "123",
+							"type": "text"
+						},
+						{
+							"key": "grant_type",
+							"value": "password",
+							"type": "text"
+						},
+						{
+							"key": "client_secret",
+							"value": "{{keycloackSecret}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{keycloackServer}}/realms/{{keycloackRealm}}/protocol/openid-connect/token",
+					"host": [
+						"{{keycloackServer}}"
+					],
+					"path": [
+						"realms",
+						"{{keycloackRealm}}",
+						"protocol",
+						"openid-connect",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get user-1 profile (init)",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"console.log('request', pm.request.body.raw)"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"console.log('response', pm.response.text())\r",
+							"\r",
+							"pm.test('get user profile and save value to check', () => {\r",
+							"    pm.variables.set('unchanged_user', pm.response.json());\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BaseUrl}}/user/:username",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"user",
+						":username"
+					],
+					"variable": [
+						{
+							"key": "username",
+							"value": "user-1@hw6.ru"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update user-1 (login)",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"console.log('request', pm.request.body.raw)"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"console.log('response', pm.response.text())\r",
+							"\r",
+							"pm.test('change user-1 profile', () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"firstName\": \"{{$randomFirstName}}\",\n  \"lastName\": \"{{$randomLastName}}\",\n  \"email\": \"{{$randomEmail}}\",\n  \"phone\": \"{{$randomPhoneNumber}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseUrl}}/user/:username",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"user",
+						":username"
+					],
+					"variable": [
+						{
+							"key": "username",
+							"value": "user-1@hw6.ru"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get user-1 profile (changed)",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"console.log('request', pm.request.body.raw)"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"console.log('response', pm.response.text())\r",
+							"\r",
+							"pm.test('get user profile and save value to check', () => {\r",
+							"    const unchangedUser = pm.variables.get('unchanged_user');\r",
+							"    const currentUser = pm.response.json();\r",
+							"    \r",
+							"    pm.expect(currentUser).not.deep.equal(unchangedUser);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BaseUrl}}/user/:username",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"user",
+						":username"
+					],
+					"variable": [
+						{
+							"key": "username",
+							"value": "user-1@hw6.ru"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "logout",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.environment.set('refresh_token', '');\r",
+							"pm.environment.set('access_token', '');"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "client_id",
+							"value": "{{keycloackClient}}",
+							"type": "text"
+						},
+						{
+							"key": "refresh_token",
+							"value": "{{refresh_token}}",
+							"type": "text"
+						},
+						{
+							"key": "redirect_url",
+							"value": "http://localhost",
+							"type": "text"
+						},
+						{
+							"key": "client_secret",
+							"value": "{{keycloackSecret}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{keycloackServer}}/realms/{{keycloackRealm}}/protocol/openid-connect/logout",
+					"host": [
+						"{{keycloackServer}}"
+					],
+					"path": [
+						"realms",
+						"{{keycloackRealm}}",
+						"protocol",
+						"openid-connect",
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "register user 2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"console.log('response', pm.response.text())\r",
+							"\r",
+							"pm.test('register user 2', () => {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"console.log('request', pm.request.body.raw)\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{admin_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"user-2@hw6.ru\",\r\n    \"emailVerified\": true,\r\n    \"email\": \"user-2@hw6.ru\",\r\n    \"firstName\": \"User\",\r\n    \"lastName\": \"Two\",\r\n    \"enabled\": true,\r\n    \"credentials\" : [\r\n        {\r\n            \"type\" : \"password\",\r\n            \"value\" : \"123\"\r\n        }\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{keycloackServer}}/admin/realms/{{keycloackRealm}}/users",
+					"host": [
+						"{{keycloackServer}}"
+					],
+					"path": [
+						"admin",
+						"realms",
+						"{{keycloackRealm}}",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login user 2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"console.log('response', pm.response.text())\r",
+							"\r",
+							"const body = pm.response.json();\r",
+							"pm.environment.set('refresh_token', body.refresh_token);\r",
+							"pm.environment.set('access_token', body.access_token);\r",
+							"\r",
+							"pm.test('login user-2', () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"console.log('request', pm.request.body.raw)\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "client_id",
+							"value": "{{keycloackClient}}",
+							"type": "text"
+						},
+						{
+							"key": "username",
+							"value": "user-2@hw6.ru",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "123",
+							"type": "text"
+						},
+						{
+							"key": "grant_type",
+							"value": "password",
+							"type": "text"
+						},
+						{
+							"key": "client_secret",
+							"value": "{{keycloackSecret}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{keycloackServer}}/realms/{{keycloackRealm}}/protocol/openid-connect/token",
+					"host": [
+						"{{keycloackServer}}"
+					],
+					"path": [
+						"realms",
+						"{{keycloackRealm}}",
+						"protocol",
+						"openid-connect",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get user-1 profile (from user-2)",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"console.log('request', pm.request.body.raw)\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"console.log('response', pm.response.text())\r",
+							"\r",
+							"pm.test('verifies that user-2 cannot access user-1 profile', () => {\r",
+							"    pm.response.to.have.status(401);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BaseUrl}}/user/:username",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"user",
+						":username"
+					],
+					"variable": [
+						{
+							"key": "username",
+							"value": "user-1@hw6.ru"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update user-1 (from user-2)",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"console.log('request', pm.request.body.raw)\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"console.log('response', pm.response.text())\r",
+							"\r",
+							"pm.test('verifies that user-2 cannot edit user-1 profile', () => {\r",
+							"    pm.response.to.have.status(401);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"firstName\": \"{{$randomFirstName}}\",\n  \"lastName\": \"{{$randomLastName}}\",\n  \"email\": \"{{$randomEmail}}\",\n  \"phone\": \"{{$randomPhoneNumber}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseUrl}}/user/:username",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"user",
+						":username"
+					],
+					"variable": [
+						{
+							"key": "username",
+							"value": "user-1@hw6.ru"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get user-2 profile",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BaseUrl}}/user/:id",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"user",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "user-2@hw6.ru"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update user-2",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"let users = pm.collectionVariables.get('users') ?? [];\r",
+							"if (!Array.isArray(users)) users = [];\r",
+							"\r",
+							"const selectedUser = users[Math.floor(Math.random()*users.length)];\r",
+							"\r",
+							"\r",
+							"pm.request.url.variables.idx(0).value = selectedUser;"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"firstName\": \"{{$randomFirstName}}\",\n  \"lastName\": \"{{$randomLastName}}\",\n  \"email\": \"{{$randomEmail}}\",\n  \"phone\": \"{{$randomPhoneNumber}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseUrl}}/user/:id",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"user",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "user-2@hw6.ru"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{access_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "BaseUrl",
+			"value": "http://arch.homework",
+			"type": "string"
+		},
+		{
+			"key": "users",
+			"value": ""
+		},
+		{
+			"key": "deletedUsers",
+			"value": ""
+		},
+		{
+			"key": "keycloackServer",
+			"value": "http://keycloak.arch.homework",
+			"type": "default"
+		},
+		{
+			"key": "keycloackRealm",
+			"value": "hw6",
+			"type": "default"
+		},
+		{
+			"key": "keycloackClient",
+			"value": "hw6",
+			"type": "default"
+		},
+		{
+			"key": "keycloackSecret",
+			"value": "u6iHIt8DZS6msnJXthy292OWQGZuXMpC",
+			"type": "default"
+		}
+	]
+}

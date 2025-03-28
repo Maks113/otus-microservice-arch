@@ -9,70 +9,14 @@ mongodb:
     repository: bitnami/mongodb
     tag: 4.4.15
 
-prometheus:
+keycloak:
   enabled: true
-  server:
-    service:
-      type: ClusterIP
-      ports:
-        http: 9099
-    extraScrapeConfigs:
-      - job_name: app
-        scrape_interval: 5s
-        metrics_path: /metrics
-        static_configs:
-          - targets:
-              - arch.homework
-            labels:
-              app: hw5-app
-      - job_name: mongo
-        scrape_interval: 5s
-        metrics_path: /metrics
-        static_configs:
-          - targets:
-              - mongo-metrics.arch.homework
-            labels:
-              app: mongo
-      - job_name: ingress-nginx
-        scrape_interval: 5s
-        metrics_path: /metrics
-        static_configs:
-          - targets:
-              - 10.99.28.196:10254
-            labels:
-              app: ingress-nginx
-      - job_name: k8s
-        scheme: https
-        tls_config:
-          insecure_skip_verify: true
-        scrape_interval: 5s
-        metrics_path: /metrics
-        static_configs:
-          - targets:
-              - 10.1.1.27:10250
-            labels:
-              app: k8s
 
-grafana:
+redis:
   enabled: true
-  admin:
-    password: admin
-    user: admin
-  datasources:
-    secretDefinition:
-      apiVersion: 1
-      datasources:
-        - name: Prometheus
-          type: prometheus
-          access: proxy
-          orgId: 1
-          url: http://prometheus.arch.homework/
-          version: 1
-          editable: true
-          isDefault: true
 
 app:
-  image: maks113/microservice-architecture-homework-5
+  image: maks113/microservice-architecture-homework-6
   tag: 1.0.0
   port: 8000
   mongo:
