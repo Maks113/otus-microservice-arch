@@ -1,0 +1,43 @@
+newman
+
+valid-page
+
+□ test-case
+└ login 1
+  POST http://keycloak.arch.homework/realms/valid-page/protocol/openid-connect/token [200 OK, 2.65kB, 60ms]
+
+└ send request 1
+  POST http://arch.homework/req/screenshot-request [201 Created, 141B, 30ms]
+  √  is first request success
+
+└ user requests 1
+  GET http://arch.homework/req/screenshot-request [200 OK, 66.12kB, 12ms]
+  √  check request success
+
+└ send request 2
+  POST http://arch.homework/req/screenshot-request [201 Created, 141B, 38ms]
+  √  is second request success
+
+└ user requests 2
+  GET http://arch.homework/req/screenshot-request [200 OK, 66.73kB, 10ms]
+  √  check request success
+
+┌─────────────────────────┬───────────────────┬──────────────────┐
+│                         │          executed │           failed │
+├─────────────────────────┼───────────────────┼──────────────────┤
+│              iterations │                 1 │                0 │
+├─────────────────────────┼───────────────────┼──────────────────┤
+│                requests │                 5 │                0 │
+├─────────────────────────┼───────────────────┼──────────────────┤
+│            test-scripts │                10 │                0 │
+├─────────────────────────┼───────────────────┼──────────────────┤
+│      prerequest-scripts │                 5 │                0 │
+├─────────────────────────┼───────────────────┼──────────────────┤
+│              assertions │                 4 │                0 │
+├─────────────────────────┴───────────────────┴──────────────────┤
+│ total run duration: 1m 0.5s                                    │
+├────────────────────────────────────────────────────────────────┤
+│ total data received: 134.67kB (approx)                         │
+├────────────────────────────────────────────────────────────────┤
+│ average response time: 30ms [min: 10ms, max: 60ms, s.d.: 18ms] │
+└────────────────────────────────────────────────────────────────┘

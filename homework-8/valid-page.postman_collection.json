@@ -1,0 +1,644 @@
+{
+	"info": {
+		"_postman_id": "ddca1ae6-385b-4a32-aff2-d314296f3178",
+		"name": "valid-page",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12400630"
+	},
+	"item": [
+		{
+			"name": "req",
+			"item": [
+				{
+					"name": "req-metrics",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/req/metrics",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"req",
+								"metrics"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "send request",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"link\": \"http://kafka-ui.arch.homework/ui/clusters/local/all-topics?perPage=25\"\r\n  //\"userEmail\": \"user-504@valid-page.ru\",\r\n  //\"userEmail1\": \"user-{{$randomInt}}@valid-page.ru\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/req/screenshot-request",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"req",
+								"screenshot-request"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "user requests",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/req/screenshot-request",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"req",
+								"screenshot-request"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "meta",
+			"item": [
+				{
+					"name": "meta-metrics",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/meta/metrics",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"meta",
+								"metrics"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "meta-by_file",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/E:/Downloads/response.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/meta/screenshot-request",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"meta",
+								"screenshot-request"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "meta-by_id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/meta/screenshot-request/:id",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"meta",
+								"screenshot-request",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "67e1e866f05a9c1aeb39b304"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get file",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/meta/screenshot-request/file/:fileName",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"meta",
+								"screenshot-request",
+								"file",
+								":fileName"
+							],
+							"variable": [
+								{
+									"key": "fileName",
+									"value": "67e26c73c6071edb0dcc090a.png"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "keycloack",
+			"item": [
+				{
+					"name": "configuration",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{keycloackServer}}/realms/{{keycloackRealm}}/.well-known/openid-configuration",
+							"host": [
+								"{{keycloackServer}}"
+							],
+							"path": [
+								"realms",
+								"{{keycloackRealm}}",
+								".well-known",
+								"openid-configuration"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"const body = pm.response.json();\r",
+									"pm.environment.set('refresh_token', body.refresh_token);\r",
+									"pm.environment.set('access_token', body.access_token);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "client_id",
+									"value": "{{keycloackClient}}",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "maks@valid-page.ru",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "123",
+									"type": "text"
+								},
+								{
+									"key": "grant_type",
+									"value": "password",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "{{keycloackSecret}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{keycloackServer}}/realms/{{keycloackRealm}}/protocol/openid-connect/token",
+							"host": [
+								"{{keycloackServer}}"
+							],
+							"path": [
+								"realms",
+								"{{keycloackRealm}}",
+								"protocol",
+								"openid-connect",
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "logout",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// pm.environment.set('refresh_token', '');\r",
+									"// pm.environment.set('access_token', '');"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "client_id",
+									"value": "{{keycloackClient}}",
+									"type": "text"
+								},
+								{
+									"key": "refresh_token",
+									"value": "{{refresh_token}}",
+									"type": "text"
+								},
+								{
+									"key": "redirect_url",
+									"value": "http://localhost",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "{{keycloackSecret}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{keycloackServer}}/realms/{{keycloackRealm}}/protocol/openid-connect/logout",
+							"host": [
+								"{{keycloackServer}}"
+							],
+							"path": [
+								"realms",
+								"{{keycloackRealm}}",
+								"protocol",
+								"openid-connect",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "test-case",
+			"item": [
+				{
+					"name": "login 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"const body = pm.response.json();\r",
+									"pm.environment.set('refresh_token', body.refresh_token);\r",
+									"pm.environment.set('access_token', body.access_token);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "client_id",
+									"value": "{{keycloackClient}}",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "maks@valid-page.ru",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "123",
+									"type": "text"
+								},
+								{
+									"key": "grant_type",
+									"value": "password",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "{{keycloackSecret}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{keycloackServer}}/realms/{{keycloackRealm}}/protocol/openid-connect/token",
+							"host": [
+								"{{keycloackServer}}"
+							],
+							"path": [
+								"realms",
+								"{{keycloackRealm}}",
+								"protocol",
+								"openid-connect",
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "send request 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('is first request success', () => {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"setTimeout(function(){}, 30 * 1000);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"link\": \"https://example.com/\"\r\n  //\"userEmail\": \"user-504@valid-page.ru\",\r\n  //\"userEmail1\": \"user-{{$randomInt}}@valid-page.ru\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/req/screenshot-request",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"req",
+								"screenshot-request"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "user requests 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('check request success', () => {\r",
+									"    const requests = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(requests[0].status).equal(\"completed\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/req/screenshot-request",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"req",
+								"screenshot-request"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "send request 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('is second request success', () => {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"setTimeout(function(){}, 30 * 1000);\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"link\": \"https://example.com/\"\r\n  //\"userEmail\": \"user-504@valid-page.ru\",\r\n  //\"userEmail1\": \"user-{{$randomInt}}@valid-page.ru\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/req/screenshot-request",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"req",
+								"screenshot-request"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "user requests 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('check request success', () => {\r",
+									"    const requests = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(requests[0].status).equal(\"failed\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/req/screenshot-request",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"req",
+								"screenshot-request"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{access_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "BaseUrl",
+			"value": "http://arch.homework",
+			"type": "string"
+		},
+		{
+			"key": "keycloackServer",
+			"value": "http://keycloak.arch.homework",
+			"type": "string"
+		},
+		{
+			"key": "keycloackRealm",
+			"value": "valid-page",
+			"type": "string"
+		},
+		{
+			"key": "keycloackClient",
+			"value": "valid-page",
+			"type": "string"
+		},
+		{
+			"key": "keycloackSecret",
+			"value": "lmj9m7NKq8hhM5L4fzOjiXNUU6aHLMu3",
+			"type": "string"
+		}
+	]
+}

@@ -12,7 +12,7 @@ import { LoggerPlugin } from './plugins/logger.plugin';
 import { SwaggerPlugin } from './plugins/swagger.plugin';
 
 async function bootstrap() {
-  // otelSDK.start();
+  otelSDK.start();
 
   const configContext = await NestFactory.createApplicationContext(
     ConfigurationModule,

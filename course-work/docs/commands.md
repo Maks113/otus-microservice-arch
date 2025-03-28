@@ -28,16 +28,16 @@ docker port minikube
 docker build -t maks113/valid-page-consumer-service:1.0.3 ./consumer-service/
 docker build -t maks113/valid-page-notification-service:1.0.3 ./notifications-service/
 docker build -t maks113/valid-page-page-capture-service:1.0.2 ./page-capture-service/
-docker build -t maks113/valid-screenshot-meta-service:1.0.12 ./screenshot-meta-service/
+docker build -t maks113/valid-screenshot-meta-service:1.0.13 ./screenshot-meta-service/
 docker build -t maks113/valid-page-screenshot-requests-service:1.0.7 ./screenshot-requests-service/
 
 minikube image load maks113/valid-page-consumer-service:1.0.3
 minikube image load maks113/valid-page-notification-service:1.0.3
 minikube image load maks113/valid-page-page-capture-service:1.0.2
-minikube image load maks113/valid-screenshot-meta-service:1.0.12
+minikube image load maks113/valid-screenshot-meta-service:1.0.13
 minikube image load maks113/valid-page-screenshot-requests-service:1.0.7
 ```
 
 ```sh
-helm upgrade -n app valid-page ../valid-page-chart
+helm upgrade --install -n app --create-namespace valid-page ../valid-page-chart
 ```
